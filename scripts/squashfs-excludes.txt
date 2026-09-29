@@ -1,0 +1,30 @@
+# Arquivo de exclusões para mksquashfs
+# Esses arquivos/diretórios NÃO serão incluídos na ISO
+
+# Cache
+var/cache/apt/archives/*
+var/lib/apt/lists/*
+var/tmp/*
+tmp/*
+
+# Logs
+var/log/*.log
+var/log/*.gz
+
+# Desenvolvimento (não vai na ISO final)
+usr/include/*
+usr/share/man/*
+usr/share/doc/*
+usr/share/info/*
+
+# Bytecodes Python
+**/__pycache__
+**/*.pyc
+**/*.pyo
+
+# Arquivos de lock
+var/lib/dpkg/lock*
+var/cache/debconf/*
+
+# Build do compositor (fontes, não binários)
+usr/lib/rjos/build

@@ -1,0 +1,28 @@
+[Unit]
+Description=RJOS Desktop Session
+After=systemd-user-sessions.service network.target
+Wants=systemd-user-sessions.service
+
+[Service]
+Type=simple
+User=rjos
+Environment=XDG_SESSION_TYPE=wayland
+Environment=XDG_CURRENT_DESKTOP=RJOS
+Environment=MOZ_ENABLE_WAYLAND=1
+Environment=QT_QPA_PLATFORM=wayland
+Environment=_JAVA_AWT_WM_NONREPARENTING=1
+
+# Inicia o compositor Wayland
+ExecStart=/usr/local/bin/rjos-compositor
+ExecStopPost=/bin/systemctl restart getty@tty1.service
+
+Restart=on-failure
+RestartSec=3
+
+StandardInput=tty
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+
+[Install]
+WantedBy=graphical.target

@@ -1,0 +1,125 @@
+# Lista de pacotes instalados no rootfs RJOS
+# Editado por: build.sh
+# Formato: um pacote por linha, comentários com #
+# Seções organizadas por categoria
+
+# ─── Base mínima ─────────────────────────────────────────────────────────────
+systemd
+systemd-sysv
+dbus
+udev
+locales
+ca-certificates
+apt
+
+# ─── Kernel e boot ───────────────────────────────────────────────────────────
+linux-image-amd64
+linux-headers-amd64
+grub-pc
+initramfs-tools
+
+# ─── Firmware de hardware ─────────────────────────────────────────────────────
+firmware-linux
+firmware-linux-nonfree
+firmware-iwlwifi
+firmware-realtek
+firmware-atheros
+firmware-brcm80211
+firmware-intel-sound
+linux-firmware
+
+# ─── Rede ────────────────────────────────────────────────────────────────────
+network-manager
+iproute2
+iputils-ping
+curl
+wget
+wireless-tools
+wpasupplicant
+rfkill
+net-tools
+dnsutils
+openssh-client
+
+# ─── Áudio ────────────────────────────────────────────────────────────────────
+pipewire
+pipewire-pulse
+wireplumber
+alsa-utils
+pulseaudio-utils
+
+# ─── Wayland e gráficos ───────────────────────────────────────────────────────
+wayland-protocols
+libwayland-client0
+libwayland-server0
+mesa-vulkan-drivers
+mesa-va-drivers
+libgl1-mesa-dri
+seatd
+polkit
+
+# ─── GTK4 e toolkit ──────────────────────────────────────────────────────────
+libgtk-4-1
+libadwaita-1-0
+gir1.2-gtk-4.0
+gir1.2-adw-1
+python3-gi
+python3-gi-cairo
+
+# ─── VTE (terminal) ───────────────────────────────────────────────────────────
+# gir1.2-vte-2.91-gtk4   (instalar se disponível no Bookworm)
+libvte-2.91-0
+
+# ─── Flatpak (loja de apps) ──────────────────────────────────────────────────
+flatpak
+xdg-desktop-portal
+xdg-desktop-portal-wlr
+
+# ─── Fontes ───────────────────────────────────────────────────────────────────
+fonts-inter
+fonts-jetbrains-mono
+fonts-noto
+fonts-noto-color-emoji
+
+# ─── Utilitários desktop ──────────────────────────────────────────────────────
+swaybg
+mako-notifier
+wl-clipboard
+brightnessctl
+acpid
+upower
+
+# ─── Shell e ferramentas ─────────────────────────────────────────────────────
+bash
+bash-completion
+coreutils
+util-linux
+e2fsprogs
+fdisk
+nano
+less
+file
+sudo
+htop
+tree
+
+# ─── Python (apps RJOS) ──────────────────────────────────────────────────────
+python3
+python3-pip
+
+# ─── Desenvolvimento ─────────────────────────────────────────────────────────
+git
+build-essential
+gcc
+make
+pkg-config
+meson
+ninja-build
+libwlroots-dev
+libgtk-4-dev
+libadwaita-1-dev
+libwayland-dev
+
+# ─── Navegador (Fase 3) ──────────────────────────────────────────────────────
+# firefox-esr   (instalar via Flatpak ou repositório Mozilla)
+# chromium      (disponível no Debian)

@@ -1,0 +1,442 @@
+#!/usr/bin/env bash
+# =============================================================================
+# RJOS Theme Daemon — rjos-theme
+# Aplica mudanças de tema/cor em tempo real para todos os apps GTK4
+#
+# Como funciona:
+#   1. Escreve um arquivo CSS de override em ~/.config/rjos/theme-override.css
+#   2. O GTK4 carrega esse arquivo via XDG_CONFIG_HOME/gtk-4.0/gtk.css
+#   3. As variáveis @define-color substituem as do tema base
+#   4. Apps GTK4 em execução recebem a mudança via GSettings / CSS reload
+#
+# Uso:
+#   rjos-theme set-accent "#7B2FBE"
+#   rjos-theme set-style  dark|light|oled
+#   rjos-theme set-font   "Inter 13"
+#   rjos-theme get-accent
+#   rjos-theme apply      (reaplica configuração salva)
+# =============================================================================
+
+set -euo pipefail
+
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/rjos"
+THEME_CONFIG="$CONFIG_DIR/theme.json"
+GTK4_CSS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-4.0"
+GTK4_OVERRIDE="$GTK4_CSS_DIR/gtk.css"
+SYSTEM_THEME="/usr/share/themes/RJOS/gtk-4.0/gtk.css"
+
+mkdir -p "$CONFIG_DIR"
+mkdir -p "$GTK4_CSS_DIR"
+
+# ─── Paleta de cores disponíveis ──────────────────────────────────────────────
+declare -A ACCENT_COLORS=(
+    ["cyan"]="#00D4FF"
+    ["purple"]="#7B2FBE"
+    ["green"]="#00E676"
+    ["orange"]="#FF8C00"
+    ["pink"]="#FF3D71"
+    ["blue"]="#2979FF"
+    ["teal"]="#00BCD4"
+    ["yellow"]="#FFD600"
+)
+
+declare -A ACCENT_DIM=(
+    ["cyan"]="rgba(0,212,255,0.12)"
+    ["purple"]="rgba(123,47,190,0.15)"
+    ["green"]="rgba(0,230,118,0.12)"
+    ["orange"]="rgba(255,140,0,0.12)"
+    ["pink"]="rgba(255,61,113,0.12)"
+    ["blue"]="rgba(41,121,255,0.12)"
+    ["teal"]="rgba(0,188,212,0.12)"
+    ["yellow"]="rgba(255,214,0,0.12)"
+)
+
+declare -A ACCENT_FG=(
+    ["cyan"]="#0D1B2A"
+    ["purple"]="#FFFFFF"
+    ["green"]="#0D1B2A"
+    ["orange"]="#0D1B2A"
+    ["pink"]="#FFFFFF"
+    ["blue"]="#FFFFFF"
+    ["teal"]="#0D1B2A"
+    ["yellow"]="#0D1B2A"
+)
+
+# ─── Temas de fundo ───────────────────────────────────────────────────────────
+declare -A STYLE_BG=(
+    ["dark"]="#0D1B2A"
+    ["light"]="#F0F4F8"
+    ["oled"]="#000000"
+)
+
+declare -A STYLE_SURFACE=(
+    ["dark"]="#1B2838"
+    ["light"]="#FFFFFF"
+    ["oled"]="#0A0A0A"
+)
+
+declare -A STYLE_TEXT=(
+    ["dark"]="#E8F4FD"
+    ["light"]="#0D1B2A"
+    ["oled"]="#FFFFFF"
+)
+
+# ─── Lê configuração atual ────────────────────────────────────────────────────
+read_config() {
+    if [[ -f "$THEME_CONFIG" ]]; then
+        cat "$THEME_CONFIG"
+    else
+        echo '{"accent":"cyan","style":"dark","font":"Inter 13","mono_font":"JetBrains Mono 12","transparency":true,"animations":true}'
+    fi
+}
+
+get_config_value() {
+    local key="$1"
+    read_config | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('$key',''))" 2>/dev/null || echo ""
+}
+
+save_config() {
+    local key="$1"
+    local value="$2"
+    local current
+    current=$(read_config)
+    echo "$current" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+d['$key'] = '$value'
+print(json.dumps(d, indent=2))
+" > "$THEME_CONFIG"
+}
+
+# ─── Gera o CSS de override ──────────────────────────────────────────────────
+generate_css_override() {
+    local accent_name
+    local style
+    accent_name=$(get_config_value "accent")
+    style=$(get_config_value "style")
+    local font
+    font=$(get_config_value "font")
+    local mono_font
+    mono_font=$(get_config_value "mono_font")
+    local transparency
+    transparency=$(get_config_value "transparency")
+
+    accent_name="${accent_name:-cyan}"
+    style="${style:-dark}"
+    font="${font:-Inter 13}"
+    mono_font="${mono_font:-JetBrains Mono 12}"
+
+    local accent_hex="${ACCENT_COLORS[$accent_name]:-${ACCENT_COLORS[cyan]}}"
+    local accent_dim="${ACCENT_DIM[$accent_name]:-${ACCENT_DIM[cyan]}}"
+    local accent_fg="${ACCENT_FG[$accent_name]:-${ACCENT_FG[cyan]}}"
+    local bg="${STYLE_BG[$style]:-${STYLE_BG[dark]}}"
+    local surface="${STYLE_SURFACE[$style]:-${STYLE_SURFACE[dark]}}"
+    local text="${STYLE_TEXT[$style]:-${STYLE_TEXT[dark]}}"
+
+    # Calcula versão um pouco mais clara do bg para headerbar
+    local headerbar_bg
+    if [[ "$style" == "oled" ]]; then
+        headerbar_bg="#050505"
+    else
+        headerbar_bg="#0A1520"
+    fi
+
+    cat > "$GTK4_OVERRIDE" << EOF
+/* ══════════════════════════════════════════════════════════════════
+   RJOS GTK4 Override — gerado por rjos-theme
+   Accent: $accent_name ($accent_hex)
+   Style: $style
+   Gerado em: $(date)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Importa o tema base RJOS */
+@import url("file://$SYSTEM_THEME");
+
+/* ── Override de cor de destaque ───────────────────────────────── */
+@define-color accent_color             $accent_hex;
+@define-color accent_bg_color          $accent_hex;
+@define-color accent_fg_color          $accent_fg;
+
+/* ── Override do fundo (estilo) ───────────────────────────────── */
+@define-color window_bg_color          $bg;
+@define-color window_fg_color          $text;
+@define-color headerbar_bg_color       $headerbar_bg;
+@define-color headerbar_fg_color       $text;
+@define-color card_bg_color            $surface;
+@define-color sidebar_bg_color         $headerbar_bg;
+
+/* ── Elementos que usam a cor de destaque ──────────────────────── */
+button.suggested-action {
+    background-color: $accent_hex;
+    color: $accent_fg;
+}
+button.suggested-action:hover {
+    background-color: $accent_hex;
+    filter: brightness(1.1);
+}
+
+switch:checked {
+    background-color: $accent_hex;
+    border-color: $accent_hex;
+}
+
+progressbar progress {
+    background: $accent_hex;
+}
+
+scale highlight {
+    background: $accent_hex;
+}
+scale slider {
+    background-color: $accent_hex;
+    box-shadow: 0 0 8px $accent_dim;
+}
+
+listview row:selected, list row:selected {
+    background-color: $accent_dim;
+    color: $accent_hex;
+}
+
+entry:focus {
+    border-color: $accent_hex;
+    box-shadow: 0 0 0 2px $accent_dim;
+}
+
+/* Scrollbar com cor de destaque */
+scrollbar slider {
+    background-color: $accent_dim;
+}
+scrollbar slider:hover {
+    background-color: $accent_hex;
+    opacity: 0.7;
+}
+
+/* Notebook (abas) */
+notebook tab:checked {
+    color: $accent_hex;
+    border-bottom-color: $accent_hex;
+}
+
+checkbutton check:checked,
+radiobutton radio:checked {
+    background-color: $accent_hex;
+    border-color: $accent_hex;
+    color: $accent_fg;
+}
+
+/* Popover / hover com cor de destaque */
+menuitem:hover {
+    background-color: $accent_dim;
+    color: $accent_hex;
+}
+EOF
+
+    echo "GTK4 override escrito em: $GTK4_OVERRIDE"
+}
+
+# ─── Notifica apps GTK4 em execução ─────────────────────────────────────────
+notify_gtk_apps() {
+    # Método 1: gsettings — força reload do tema
+    # Trick: muda e volta o tema para forçar reload em apps em execução
+    local current_theme
+    current_theme=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null | tr -d "'") || true
+
+    if [[ -n "$current_theme" ]]; then
+        gsettings set org.gnome.desktop.interface gtk-theme "Adwaita"     2>/dev/null || true
+        sleep 0.1
+        gsettings set org.gnome.desktop.interface gtk-theme "$current_theme" 2>/dev/null || true
+    fi
+
+    # Método 2: sinal SIGUSR1 para apps que suportam reload de CSS
+    # (apps RJOS podem implementar isso futuramente)
+    pkill -SIGUSR1 -f "rjos-shell"   2>/dev/null || true
+    pkill -SIGUSR1 -f "rjos-files"   2>/dev/null || true
+    pkill -SIGUSR1 -f "rjos-settings" 2>/dev/null || true
+
+    # Método 3: atualiza variável de ambiente para novos processos
+    # (salvo no .profile para persistência)
+    local profile="$HOME/.profile"
+    grep -v "RJOS_ACCENT" "$profile" > /tmp/rjos_profile_tmp 2>/dev/null || true
+    echo "export RJOS_ACCENT_COLOR=\"$(get_config_value accent)\"" >> /tmp/rjos_profile_tmp
+    mv /tmp/rjos_profile_tmp "$profile" 2>/dev/null || true
+
+    echo "Notificação enviada para apps em execução."
+}
+
+# ─── Comandos ─────────────────────────────────────────────────────────────────
+cmd_set_accent() {
+    local input="$1"
+    local name=""
+
+    # Aceita nome ("cyan", "purple") ou hex ("#00D4FF")
+    if [[ "$input" == "#"* ]]; then
+        # Hex direto: encontra o nome correspondente
+        for key in "${!ACCENT_COLORS[@]}"; do
+            if [[ "${ACCENT_COLORS[$key]}" == "$input" ]]; then
+                name="$key"
+                break
+            fi
+        done
+        if [[ -z "$name" ]]; then
+            # Cor personalizada: adiciona como "custom"
+            name="custom"
+            ACCENT_COLORS["custom"]="$input"
+            ACCENT_DIM["custom"]="rgba(0,0,0,0.12)"
+            ACCENT_FG["custom"]="#0D1B2A"
+        fi
+    else
+        name="${input,,}"  # lowercase
+        if [[ -z "${ACCENT_COLORS[$name]+x}" ]]; then
+            echo "Cor desconhecida: $input"
+            echo "Disponíveis: ${!ACCENT_COLORS[*]}"
+            exit 1
+        fi
+    fi
+
+    echo "Aplicando cor de destaque: $name (${ACCENT_COLORS[$name]})"
+    save_config "accent" "$name"
+    generate_css_override
+    notify_gtk_apps
+    echo "✅ Cor de destaque alterada para: $name (${ACCENT_COLORS[$name]})"
+}
+
+cmd_set_style() {
+    local style="${1,,}"
+    if [[ -z "${STYLE_BG[$style]+x}" ]]; then
+        echo "Estilo desconhecido: $style"
+        echo "Disponíveis: dark, light, oled"
+        exit 1
+    fi
+    echo "Aplicando estilo: $style"
+    save_config "style" "$style"
+
+    # gsettings para color-scheme
+    case "$style" in
+        dark)  gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"  2>/dev/null || true ;;
+        light) gsettings set org.gnome.desktop.interface color-scheme "prefer-light" 2>/dev/null || true ;;
+        oled)  gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"  2>/dev/null || true ;;
+    esac
+
+    generate_css_override
+    notify_gtk_apps
+    echo "✅ Estilo alterado para: $style"
+}
+
+cmd_set_font() {
+    local font="$1"
+    save_config "font" "$font"
+    gsettings set org.gnome.desktop.interface font-name "$font" 2>/dev/null || true
+    generate_css_override
+    echo "✅ Fonte da interface: $font"
+}
+
+cmd_set_mono_font() {
+    local font="$1"
+    save_config "mono_font" "$font"
+    gsettings set org.gnome.desktop.interface monospace-font-name "$font" 2>/dev/null || true
+    echo "✅ Fonte monospace: $font"
+}
+
+cmd_set_transparency() {
+    local val="${1:-true}"
+    save_config "transparency" "$val"
+    generate_css_override
+    notify_gtk_apps
+    echo "✅ Transparência: $val"
+}
+
+cmd_apply() {
+    echo "Aplicando configuração de tema salva..."
+    generate_css_override
+    notify_gtk_apps
+    echo "✅ Tema aplicado."
+}
+
+cmd_get_accent() {
+    local name
+    name=$(get_config_value "accent")
+    local hex="${ACCENT_COLORS[$name]:-?}"
+    echo "$name ($hex)"
+}
+
+cmd_list_accents() {
+    echo "Cores de destaque disponíveis:"
+    for key in "${!ACCENT_COLORS[@]}"; do
+        local current
+        current=$(get_config_value "accent")
+        local marker=""
+        [[ "$key" == "$current" ]] && marker=" ← atual"
+        echo "  $key  →  ${ACCENT_COLORS[$key]}$marker"
+    done
+}
+
+cmd_reset() {
+    rm -f "$THEME_CONFIG"
+    rm -f "$GTK4_OVERRIDE"
+    gsettings set org.gnome.desktop.interface gtk-theme "RJOS" 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" 2>/dev/null || true
+    generate_css_override
+    notify_gtk_apps
+    echo "✅ Tema resetado para padrão RJOS."
+}
+
+cmd_status() {
+    local cfg
+    cfg=$(read_config)
+    echo "Configuração de tema atual:"
+    echo "$cfg" | python3 -m json.tool 2>/dev/null || echo "$cfg"
+    echo ""
+    echo "Arquivo GTK4 override: $GTK4_OVERRIDE"
+    echo "Arquivo config: $THEME_CONFIG"
+}
+
+cmd_help() {
+    echo "rjos-theme — Gerenciador de tema do RJOS"
+    echo ""
+    echo "Uso: rjos-theme <comando> [argumento]"
+    echo ""
+    echo "Comandos:"
+    echo "  set-accent <nome|#hex>   Define cor de destaque"
+    echo "  set-style  <dark|light|oled>  Define estilo do tema"
+    echo "  set-font   <\"Nome Tamanho\">  Define fonte da interface"
+    echo "  set-mono   <\"Nome Tamanho\">  Define fonte monospace"
+    echo "  set-transparency <true|false>  Controla transparência"
+    echo "  apply                    Reaplica configuração salva"
+    echo "  get-accent               Mostra cor atual"
+    echo "  list-accents             Lista cores disponíveis"
+    echo "  status                   Mostra configuração completa"
+    echo "  reset                    Reseta para padrão"
+    echo ""
+    echo "Exemplos:"
+    echo "  rjos-theme set-accent purple"
+    echo "  rjos-theme set-accent '#FF8C00'"
+    echo "  rjos-theme set-style oled"
+    echo "  rjos-theme set-font 'Roboto 13'"
+}
+
+# ─── Main ──────────────────────────────────────────────────────────────────────
+main() {
+    local cmd="${1:-help}"
+    shift || true
+
+    case "$cmd" in
+        set-accent)       cmd_set_accent "${1:-}"   ;;
+        set-style)        cmd_set_style  "${1:-}"   ;;
+        set-font)         cmd_set_font   "${1:-}"   ;;
+        set-mono)         cmd_set_mono_font "${1:-}" ;;
+        set-transparency) cmd_set_transparency "${1:-true}" ;;
+        apply)            cmd_apply              ;;
+        get-accent)       cmd_get_accent         ;;
+        list-accents)     cmd_list_accents        ;;
+        status)           cmd_status              ;;
+        reset)            cmd_reset               ;;
+        help|--help|-h)   cmd_help                ;;
+        *)
+            echo "Comando desconhecido: $cmd"
+            cmd_help
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"

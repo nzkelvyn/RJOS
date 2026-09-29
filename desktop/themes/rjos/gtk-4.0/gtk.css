@@ -1,0 +1,491 @@
+# RJOS — Tema GTK4
+# Arquivo principal de estilos da interface RJOS
+# Importado por: /usr/share/themes/RJOS/gtk-4.0/gtk.css
+
+/* ══════════════════════════════════════════════════════════════════════
+   RJOS Design Tokens
+   ══════════════════════════════════════════════════════════════════════ */
+
+@define-color window_bg_color          #0D1B2A;
+@define-color window_fg_color          #E8F4FD;
+@define-color headerbar_bg_color       #0A1520;
+@define-color headerbar_fg_color       #E8F4FD;
+@define-color headerbar_border_color   #1E3048;
+@define-color sidebar_bg_color         #122030;
+@define-color card_bg_color            #1B2838;
+@define-color card_shade_color         rgba(0, 0, 0, 0.15);
+@define-color accent_color             #00D4FF;
+@define-color accent_bg_color          #00D4FF;
+@define-color accent_fg_color          #0D1B2A;
+@define-color destructive_color        #FF3D71;
+@define-color destructive_bg_color     #FF3D71;
+@define-color destructive_fg_color     #FFFFFF;
+@define-color success_color            #00E676;
+@define-color warning_color            #FFB300;
+@define-color error_color              #FF3D71;
+@define-color popover_bg_color         #1B2838;
+@define-color popover_fg_color         #E8F4FD;
+@define-color dialog_bg_color          #0D1B2A;
+@define-color dialog_fg_color          #E8F4FD;
+@define-color dark_fill_bg_color       #1B2838;
+@define-color thumbnail_bg_color       #1B2838;
+@define-color shade_color              rgba(0, 0, 0, 0.3);
+@define-color scrollbar_outline_color  transparent;
+
+/* ══════════════════════════════════════════════════════════════════════
+   Base da janela
+   ══════════════════════════════════════════════════════════════════════ */
+
+window, .background {
+  background-color: @window_bg_color;
+  color: @window_fg_color;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Header Bar (barra de título)
+   ══════════════════════════════════════════════════════════════════════ */
+
+headerbar {
+  background-color: @headerbar_bg_color;
+  border-bottom: 1px solid @headerbar_border_color;
+  box-shadow: none;
+  color: @headerbar_fg_color;
+  min-height: 42px;
+  padding: 0 8px;
+}
+
+headerbar .title {
+  font-weight: 600;
+  font-size: 13px;
+  color: @headerbar_fg_color;
+}
+
+/* Botões de controle de janela (fechar, minimizar, maximizar) */
+headerbar button.close,
+headerbar button.minimize,
+headerbar button.maximize {
+  border-radius: 50%;
+  min-width: 14px;
+  min-height: 14px;
+  padding: 0;
+  margin: 0 3px;
+  border: none;
+  box-shadow: none;
+}
+
+headerbar button.close {
+  background-color: #FF3D71;
+  color: transparent;
+}
+headerbar button.close:hover { background-color: #FF6B9D; }
+
+headerbar button.minimize {
+  background-color: #FFB300;
+  color: transparent;
+}
+headerbar button.minimize:hover { background-color: #FFD54F; }
+
+headerbar button.maximize {
+  background-color: #00E676;
+  color: transparent;
+}
+headerbar button.maximize:hover { background-color: #69F0AE; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Botões
+   ══════════════════════════════════════════════════════════════════════ */
+
+button {
+  background-color: @card_bg_color;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  color: @window_fg_color;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 150ms ease;
+  box-shadow: none;
+}
+
+button:hover {
+  background-color: #243347;
+  border-color: rgba(0, 212, 255, 0.2);
+}
+
+button:active {
+  background-color: rgba(0, 212, 255, 0.2);
+  transform: scale(0.98);
+}
+
+button.suggested-action {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+  border-color: transparent;
+  font-weight: 600;
+}
+button.suggested-action:hover {
+  background-color: #33DDFF;
+}
+
+button.destructive-action {
+  background-color: @destructive_bg_color;
+  color: @destructive_fg_color;
+  border-color: transparent;
+}
+button.destructive-action:hover {
+  background-color: #FF6B9D;
+}
+
+/* Botão plano */
+button.flat {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+button.flat:hover {
+  background-color: rgba(0, 212, 255, 0.1);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Entradas de texto
+   ══════════════════════════════════════════════════════════════════════ */
+
+entry {
+  background-color: #122030;
+  border: 1px solid #1E3048;
+  border-radius: 7px;
+  color: @window_fg_color;
+  caret-color: @accent_color;
+  padding: 8px 12px;
+  font-size: 13px;
+  transition: border-color 150ms ease;
+  box-shadow: none;
+}
+
+entry:focus {
+  border-color: @accent_color;
+  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.15);
+}
+
+entry placeholder {
+  color: #4A6580;
+}
+
+/* SearchEntry */
+searchentry {
+  background-color: #122030;
+  border: 1px solid #1E3048;
+  border-radius: 20px;
+  padding: 6px 12px;
+}
+searchentry:focus {
+  border-color: @accent_color;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Switch (toggle)
+   ══════════════════════════════════════════════════════════════════════ */
+
+switch {
+  background-color: #243347;
+  border-radius: 14px;
+  border: 1px solid #2A3F58;
+  min-width: 46px;
+  min-height: 26px;
+  transition: all 200ms ease;
+}
+
+switch:checked {
+  background-color: @accent_color;
+  border-color: @accent_color;
+}
+
+switch slider {
+  background-color: white;
+  border-radius: 50%;
+  min-width: 20px;
+  min-height: 20px;
+  margin: 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 200ms ease;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Scrollbar
+   ══════════════════════════════════════════════════════════════════════ */
+
+scrollbar {
+  background: transparent;
+  border: none;
+}
+scrollbar.vertical { min-width: 8px; }
+scrollbar.horizontal { min-height: 8px; }
+
+scrollbar trough {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+}
+
+scrollbar slider {
+  background-color: rgba(0, 212, 255, 0.3);
+  border-radius: 4px;
+  min-width: 6px;
+  min-height: 6px;
+  margin: 2px;
+  transition: background-color 150ms ease;
+}
+scrollbar slider:hover {
+  background-color: rgba(0, 212, 255, 0.6);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Listas e linhas
+   ══════════════════════════════════════════════════════════════════════ */
+
+listview, list {
+  background: transparent;
+  border: none;
+}
+
+listview row, list row {
+  border-radius: 6px;
+  margin: 1px 4px;
+  padding: 4px 8px;
+  transition: background-color 100ms ease;
+}
+
+listview row:hover, list row:hover {
+  background-color: rgba(0, 212, 255, 0.08);
+}
+
+listview row:selected, list row:selected {
+  background-color: rgba(0, 212, 255, 0.18);
+  color: @accent_color;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Cards (AdwActionRow, PreferencesGroup etc)
+   ══════════════════════════════════════════════════════════════════════ */
+
+.card {
+  background-color: @card_bg_color;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 0;
+}
+
+.card > * {
+  border-radius: inherit;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Sidebar (Adw.NavigationSidebar, etc)
+   ══════════════════════════════════════════════════════════════════════ */
+
+.sidebar {
+  background-color: @sidebar_bg_color;
+  border-right: 1px solid @headerbar_border_color;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Popovers e menus
+   ══════════════════════════════════════════════════════════════════════ */
+
+popover {
+  background-color: @popover_bg_color;
+  border: 1px solid #243347;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  padding: 6px;
+  color: @popover_fg_color;
+}
+
+popover > arrow { background-color: @popover_bg_color; }
+
+menu, .menu {
+  background-color: @popover_bg_color;
+  border: 1px solid #243347;
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+menuitem {
+  border-radius: 6px;
+  padding: 6px 10px;
+  transition: background-color 100ms ease;
+}
+menuitem:hover {
+  background-color: rgba(0, 212, 255, 0.1);
+  color: @accent_color;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Diálogos
+   ══════════════════════════════════════════════════════════════════════ */
+
+dialog {
+  background-color: @dialog_bg_color;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+
+.dialog-action-area button {
+  border-radius: 8px;
+  min-width: 80px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Notebook (abas)
+   ══════════════════════════════════════════════════════════════════════ */
+
+notebook > header {
+  background-color: #0A1520;
+  border-bottom: 1px solid #1E3048;
+  padding: 0 4px;
+}
+
+notebook tab {
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  color: #8BA7BF;
+  padding: 8px 16px;
+  margin: 0 2px;
+  transition: all 150ms ease;
+}
+
+notebook tab:checked {
+  color: @accent_color;
+  border-bottom-color: @accent_color;
+}
+
+notebook tab:hover {
+  color: @window_fg_color;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Progressbar
+   ══════════════════════════════════════════════════════════════════════ */
+
+progressbar trough {
+  background-color: #1B2838;
+  border-radius: 4px;
+  min-height: 6px;
+}
+
+progressbar progress {
+  background: linear-gradient(90deg, @accent_color 0%, #7B2FBE 100%);
+  border-radius: 4px;
+  min-height: 6px;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Spinner
+   ══════════════════════════════════════════════════════════════════════ */
+
+spinner {
+  color: @accent_color;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Scale (slider)
+   ══════════════════════════════════════════════════════════════════════ */
+
+scale trough {
+  background-color: #1B2838;
+  border-radius: 4px;
+  min-height: 4px;
+}
+
+scale highlight {
+  background: linear-gradient(90deg, @accent_color, #7B2FBE);
+  border-radius: 4px;
+}
+
+scale slider {
+  background-color: @accent_color;
+  border-radius: 50%;
+  min-width: 18px;
+  min-height: 18px;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+  transition: transform 100ms ease;
+}
+
+scale slider:hover {
+  transform: scale(1.2);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Tooltip
+   ══════════════════════════════════════════════════════════════════════ */
+
+tooltip {
+  background-color: #243347;
+  border: 1px solid #2A3F58;
+  border-radius: 6px;
+  color: @window_fg_color;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Check e Radio buttons
+   ══════════════════════════════════════════════════════════════════════ */
+
+checkbutton check, radiobutton radio {
+  background-color: #122030;
+  border: 1px solid #2A3F58;
+  border-radius: 4px;
+  min-width: 18px;
+  min-height: 18px;
+  transition: all 150ms ease;
+}
+
+checkbutton check:checked {
+  background-color: @accent_color;
+  border-color: @accent_color;
+  color: #0D1B2A;
+}
+
+radiobutton radio {
+  border-radius: 50%;
+}
+radiobutton radio:checked {
+  background-color: @accent_color;
+  border-color: @accent_color;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Separator
+   ══════════════════════════════════════════════════════════════════════ */
+
+separator {
+  background-color: rgba(255, 255, 255, 0.06);
+  min-width: 1px;
+  min-height: 1px;
+  margin: 2px 4px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   AdwPreferencesGroup (grupo de configurações Adwaita)
+   ══════════════════════════════════════════════════════════════════════ */
+
+preferencesgroup > box > list {
+  background-color: @card_bg_color;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+actionrow {
+  border-radius: 0;
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+actionrow:last-child { border-bottom: none; }
+
+/* Ícone de seta em rows navigáveis */
+actionrow .arrow {
+  color: #4A6580;
+}

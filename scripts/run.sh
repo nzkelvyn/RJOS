@@ -61,14 +61,27 @@ check_qemu() {
 }
 
 create_disk() {
+  if [[ "$USE_ISO" == true ]]; then
+    # No modo Live ISO, o disco virtual de instalação é opcional; fallback se não tiver permissão de escrita em build/
+    if [[ ! -f "$DISK_IMG" ]]; then
+      if ! qemu-img create -f qcow2 "$DISK_IMG" "$DISK_SIZE" &>/dev/null; then
+        DISK_IMG="/tmp/rjos-disk.img"
+        qemu-img create -f qcow2 "$DISK_IMG" "$DISK_SIZE" &>/dev/null || true
+      fi
+    fi
+    return
+  fi
+
   if [[ ! -f "$DISK_IMG" ]]; then
     echo -e "${CYAN}[INFO]${NC} Criando disco virtual: $DISK_SIZE"
-    mkdir -p "$(dirname "$DISK_IMG")"
-    qemu-img create -f qcow2 "$DISK_IMG" "$DISK_SIZE" >/dev/null
+    if ! qemu-img create -f qcow2 "$DISK_IMG" "$DISK_SIZE" 2>/dev/null; then
+      DISK_IMG="/tmp/rjos-disk.img"
+      qemu-img create -f qcow2 "$DISK_IMG" "$DISK_SIZE"
+    fi
     echo -e "${GREEN}[OK]${NC}   Disco criado: $DISK_IMG"
   else
     local size
-    size=$(du -sh "$DISK_IMG" | cut -f1)
+    size=$(du -sh "$DISK_IMG" 2>/dev/null | cut -f1 || echo "0")
     echo -e "${GREEN}[OK]${NC}   Disco existente: $DISK_IMG ($size)"
   fi
 }
@@ -87,6 +100,17 @@ main() {
   echo ""
 
   check_qemu
+
+  # Verifica se a ISO existe antes de qualquer coisa quando em modo --iso
+  if [[ "$USE_ISO" == true ]] && [[ ! -f "$ISO_PATH" ]]; then
+    echo -e "${RED}[ERROR]${NC} A imagem ISO do RJOS ainda não foi gerada em: $ISO_PATH"
+    echo ""
+    echo -e "  Por favor, gere a ISO primeiro com o comando:"
+    echo -e "    ${BOLD}${CYAN}sudo ./scripts/make-iso.sh${NC}"
+    echo ""
+    exit 1
+  fi
+
   create_disk
 
   local -a args=(
@@ -110,11 +134,6 @@ main() {
 
   # Boot por ISO ou Disco
   if [[ "$USE_ISO" == true ]]; then
-    if [[ ! -f "$ISO_PATH" ]]; then
-      echo -e "${RED}[ERROR]${NC} ISO não encontrada: $ISO_PATH"
-      echo "Execute primeiro: sudo ./scripts/make-iso.sh"
-      exit 1
-    fi
     args+=(
       -drive "file=${ISO_PATH},media=cdrom,readonly=on"
       -boot "order=d,once=d"

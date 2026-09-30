@@ -18,6 +18,13 @@ bash "$SCRIPT_DIR/build.sh" --skip-debootstrap
 echo -e "\033[0;36m[2/2] Gerando imagem ISO bootável (RJOS.iso)...\033[0m"
 bash "$SCRIPT_DIR/mkiso.sh"
 
+# Ajusta permissões para o usuário original poder rodar a ISO sem sudo
+if [[ -n "${SUDO_USER:-}" ]]; then
+  chown "$SUDO_USER:$SUDO_USER" "$PROJECT_ROOT/build/RJOS.iso" 2>/dev/null || true
+  chown "$SUDO_USER:$SUDO_USER" "$PROJECT_ROOT/build" 2>/dev/null || true
+fi
+chmod 777 "$PROJECT_ROOT/build" 2>/dev/null || true
+
 echo ""
 echo -e "\033[0;32m════════════════════════════════════════════════════════════════════\033[0m"
 echo -e "\033[1;32m  ISO gerada com sucesso: $PROJECT_ROOT/build/RJOS.iso\033[0m"

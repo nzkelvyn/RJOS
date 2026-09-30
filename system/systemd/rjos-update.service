@@ -1,0 +1,11 @@
+[Unit]
+Description=RJOS Update Daemon
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rjos-update-daemon
+User=root
+
+[Install]
+WantedBy=multi-user.target

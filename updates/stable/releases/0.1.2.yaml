@@ -1,0 +1,22 @@
+version: "0.1.2"
+channel: "stable"
+release_date: "2026-09-30"
+type: "feature"
+title: "RJOS 0.1.2"
+description: >
+  Atualização do RJOS com melhorias no Desktop,
+  sistema de atualização e estabilidade.
+changes:
+  - "Novo sistema de atualização"
+  - "Melhorias no Desktop"
+  - "Melhorias de estabilidade"
+  - "Correções de interface"
+packages:
+  - name: "rjos-shell"
+    version: "0.1.2"
+  - name: "rjos-update"
+    version: "0.1.2"
+  - name: "rjos-desktop"
+    version: "0.1.2"
+priority: "normal"
+reboot_required: false

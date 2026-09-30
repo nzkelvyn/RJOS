@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+import sys
+import time
+import subprocess
+from pathlib import Path
+
+# Add system dir to path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+from update.manager import UpdateManager
+
+def notify(title, message):
+    try:
+        subprocess.run(["notify-send", "-a", "RJOS Update", title, message])
+    except FileNotFoundError:
+        pass
+
+def main():
+    manager = UpdateManager()
+    latest = manager.check_for_updates()
+    
+    if latest:
+        v = latest["version"]
+        notify("Atualização disponível", f"RJOS {v} está disponível.\nAbra o Update Center para instalar.")
+
+if __name__ == "__main__":
+    main()

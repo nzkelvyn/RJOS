@@ -33,29 +33,34 @@ THUMBNAIL_SIZE        = 200
 
 # ─── CSS ──────────────────────────────────────────────────────────────────────
 
+try:
+    from rjos_theme import apply_rjos_theme_provider
+except ImportError:
+    apply_rjos_theme_provider = None
+
 WALLPAPER_CSS = """
 /* ══════════════════════════════════════════════════════════════════
    RJOS Wallpaper Manager — Estilos Oficiais RJOS
    ══════════════════════════════════════════════════════════════════ */
 
 .rjos-wm-window {
-    background-color: #121212;
+    background-color: @rjos-bg;
 }
 
 .rjos-wm-header {
-    background-color: #1E1E1E;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: @rjos-surface;
+    border-bottom: 1px solid @rjos-surface-border;
     padding: 12px 16px;
 }
 
 .rjos-wm-title {
-    color: #FFFFFF;
+    color: @rjos-text;
     font-size: 16px;
     font-weight: 600;
 }
 
 .rjos-wm-subtitle {
-    color: #B8B8B8;
+    color: @rjos-text-secondary;
     font-size: 12px;
     font-weight: 400;
 }
@@ -65,28 +70,28 @@ WALLPAPER_CSS = """
 }
 
 .rjos-wm-thumb {
-    background-color: #1E1E1E;
-    border: 2px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
+    background-color: @rjos-surface;
+    border: 2px solid @rjos-surface-border;
+    border-radius: var(--rjos-radius-md);
     padding: 4px;
     min-width: 180px;
     min-height: 110px;
-    transition: all 120ms ease;
+    transition: var(--rjos-transition-fast);
 }
 
 .rjos-wm-thumb:hover {
-    background-color: #292929;
-    border-color: rgba(0, 91, 150, 0.4);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    background-color: @rjos-surface-hover;
+    border-color: @rjos-blue-dim;
+    box-shadow: var(--rjos-shadow-md);
 }
 
 .rjos-wm-thumb-active {
-    border-color: #005B96;
-    box-shadow: 0 0 10px rgba(0, 91, 150, 0.4);
+    border-color: @rjos-blue;
+    box-shadow: 0 0 10px @rjos-blue-dim;
 }
 
 .rjos-wm-thumb-label {
-    color: #B8B8B8;
+    color: @rjos-text-secondary;
     font-size: 11px;
     font-weight: 500;
     margin-top: 4px;
@@ -94,81 +99,81 @@ WALLPAPER_CSS = """
 
 /* Preview grande */
 .rjos-wm-preview {
-    background-color: #1E1E1E;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+    background-color: @rjos-surface;
+    border: 1px solid @rjos-surface-border;
+    border-radius: var(--rjos-radius-lg);
     padding: 8px;
     margin: 12px 16px;
 }
 
 /* Opções de exibição */
 .rjos-wm-options {
-    background-color: #1E1E1E;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+    background-color: @rjos-surface;
+    border: 1px solid @rjos-surface-border;
+    border-radius: var(--rjos-radius-lg);
     padding: 12px 16px;
     margin: 0 16px;
 }
 
 .rjos-wm-option-label {
-    color: #FFFFFF;
+    color: @rjos-text;
     font-size: 13px;
     font-weight: 500;
 }
 
 .rjos-wm-option-desc {
-    color: #B8B8B8;
+    color: @rjos-text-secondary;
     font-size: 11px;
 }
 
 /* Barra de ações */
 .rjos-wm-actions {
     padding: 12px 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background-color: #1E1E1E;
+    border-top: 1px solid @rjos-surface-border;
+    background-color: @rjos-surface;
 }
 
 .rjos-wm-btn-apply {
-    background-color: #005B96;
-    color: #FFFFFF;
+    background-color: @rjos-blue;
+    color: @rjos-text;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--rjos-radius-md);
     padding: 8px 24px;
     font-weight: 600;
     font-size: 13px;
-    transition: all 120ms ease;
+    transition: var(--rjos-transition-fast);
 }
 
 .rjos-wm-btn-apply:hover {
-    background-color: #006FB7;
+    background-color: @rjos-blue-hover;
 }
 
 .rjos-wm-btn-apply:active {
-    background-color: #004877;
+    background-color: @rjos-blue-active;
 }
 
 .rjos-wm-btn-add {
-    background-color: #1E1E1E;
+    background-color: @rjos-surface;
     border: 1px dashed rgba(255, 255, 255, 0.16);
-    border-radius: 10px;
-    color: #B8B8B8;
+    border-radius: var(--rjos-radius-md);
+    color: @rjos-text-secondary;
     font-size: 24px;
     min-width: 180px;
     min-height: 110px;
-    transition: all 120ms ease;
+    transition: var(--rjos-transition-fast);
 }
 
 .rjos-wm-btn-add:hover {
-    border-color: #005B96;
-    color: #005B96;
-    background-color: #292929;
+    border-color: @rjos-blue;
+    color: @rjos-blue;
+    background-color: @rjos-surface-hover;
 }
 
 /* Slideshow */
 .rjos-wm-slideshow-row {
-    background-color: #1E1E1E;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+    background-color: @rjos-surface;
+    border: 1px solid @rjos-surface-border;
+    border-radius: var(--rjos-radius-lg);
     padding: 12px 16px;
     margin: 8px 16px;
 }
@@ -507,13 +512,16 @@ class RjosWallpaperApp(Adw.Application):
         self.connect("activate", self.on_activate)
 
     def on_activate(self, app):
-        provider = Gtk.CssProvider()
-        provider.load_from_string(WALLPAPER_CSS)
-        Gtk.StyleContext.add_provider_for_display(
-            Gdk.Display.get_default(),
-            provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
+        if apply_rjos_theme_provider:
+            apply_rjos_theme_provider(WALLPAPER_CSS)
+        else:
+            provider = Gtk.CssProvider()
+            provider.load_from_string(WALLPAPER_CSS)
+            Gtk.StyleContext.add_provider_for_display(
+                Gdk.Display.get_default(),
+                provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            )
 
         win = RjosWallpaperManager(app)
         win.set_application(app)

@@ -58,7 +58,7 @@ RJOS_SHARED_CSS_VARS = f"""
 
 @define-color rjos-error            {RJOS_ERROR};
 @define-color rjos-error-dim        {RJOS_ERROR_DIM};
-
+""" + """
 /* Global Design System Variables */
 * {
     /* Radii */

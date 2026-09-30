@@ -37,10 +37,10 @@ QUICK_SETTINGS_CSS = """
    ══════════════════════════════════════════════════════════════════ */
 
 .rjos-qs-panel {
-    background-color: #1E1E1E;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8);
+    background-color: alpha(@rjos-surface, 0.95);
+    border: 1px solid @rjos-surface-border;
+    border-radius: var(--rjos-radius-xl);
+    box-shadow: var(--rjos-shadow-xl);
     padding: 16px;
     min-width: 360px;
 }
@@ -51,23 +51,23 @@ QUICK_SETTINGS_CSS = """
 }
 
 .rjos-qs-username {
-    color: #FFFFFF;
+    color: @rjos-text;
     font-size: 14px;
     font-weight: 600;
 }
 
 .rjos-qs-hostname {
-    color: #B8B8B8;
+    color: @rjos-text-secondary;
     font-size: 11px;
     font-weight: 400;
 }
 
 .rjos-qs-avatar {
-    background: #005B96;
+    background: @rjos-blue;
     border-radius: 50%;
     min-width: 36px;
     min-height: 36px;
-    color: #FFFFFF;
+    color: @rjos-text;
     font-size: 16px;
     font-weight: 700;
 }
@@ -79,24 +79,24 @@ QUICK_SETTINGS_CSS = """
 
 /* Toggle Desativado (Superfície escura) */
 .rjos-qs-toggle {
-    background-color: #292929;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
+    background-color: @rjos-surface-hover;
+    border: 1px solid @rjos-surface-border;
+    border-radius: var(--rjos-radius-md);
     padding: 12px;
     min-width: 100px;
     min-height: 60px;
-    transition: all 120ms ease;
+    transition: var(--rjos-transition-fast);
 }
 
 .rjos-qs-toggle:hover {
-    background-color: #333333;
+    background-color: @rjos-surface-active;
     border-color: rgba(255, 255, 255, 0.14);
 }
 
 /* Toggle Ativo em Azul Oceano (Wi-Fi, Bluetooth) */
 .rjos-qs-toggle-active {
-    background-color: rgba(0, 91, 150, 0.22);
-    border-color: #005B96;
+    background-color: @rjos-blue-dim;
+    border-color: @rjos-blue;
 }
 
 .rjos-qs-toggle-active:hover {
@@ -105,8 +105,8 @@ QUICK_SETTINGS_CSS = """
 
 /* Toggle Ativo em Verde Tropical (Modo Economia / Sucesso) */
 .rjos-qs-toggle-green {
-    background-color: rgba(0, 168, 107, 0.22);
-    border-color: #00A86B;
+    background-color: @rjos-green-dim;
+    border-color: @rjos-green;
 }
 
 .rjos-qs-toggle-green:hover {
@@ -115,8 +115,8 @@ QUICK_SETTINGS_CSS = """
 
 /* Toggle Ativo em Amarelo Sol (Avisos / Atenção / DND) */
 .rjos-qs-toggle-yellow {
-    background-color: rgba(242, 201, 76, 0.22);
-    border-color: #F2C94C;
+    background-color: @rjos-yellow-dim;
+    border-color: @rjos-yellow;
 }
 
 .rjos-qs-toggle-yellow:hover {
@@ -129,43 +129,35 @@ QUICK_SETTINGS_CSS = """
 }
 
 .rjos-qs-toggle-label {
-    color: #B8B8B8;
+    color: @rjos-text-secondary;
     font-size: 10px;
     font-weight: 500;
 }
 
-.rjos-qs-toggle-active .rjos-qs-toggle-label {
-    color: #FFFFFF;
-    font-weight: 600;
-}
-
-.rjos-qs-toggle-green .rjos-qs-toggle-label {
-    color: #FFFFFF;
-    font-weight: 600;
-}
-
+.rjos-qs-toggle-active .rjos-qs-toggle-label,
+.rjos-qs-toggle-green .rjos-qs-toggle-label,
 .rjos-qs-toggle-yellow .rjos-qs-toggle-label {
-    color: #FFFFFF;
+    color: @rjos-text;
     font-weight: 600;
 }
 
 /* Sliders (volume, brilho) */
 .rjos-qs-slider-row {
-    background-color: #161616;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
+    background-color: @rjos-bg;
+    border: 1px solid @rjos-surface-border;
+    border-radius: var(--rjos-radius-md);
     padding: 10px 14px;
     margin-top: 8px;
 }
 
 .rjos-qs-slider-icon {
-    color: #B8B8B8;
+    color: @rjos-text-secondary;
     font-size: 18px;
     min-width: 24px;
 }
 
 .rjos-qs-slider-value {
-    color: #FFFFFF;
+    color: @rjos-text;
     font-size: 12px;
     font-weight: 500;
     min-width: 36px;
@@ -174,27 +166,33 @@ QUICK_SETTINGS_CSS = """
 /* Rodapé com botões */
 .rjos-qs-footer {
     padding-top: 8px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid @rjos-surface-border;
     margin-top: 12px;
 }
 
 .rjos-qs-footer-btn {
     background: transparent;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--rjos-radius-md);
     padding: 8px;
-    color: #B8B8B8;
+    color: @rjos-text-secondary;
     font-size: 18px;
     min-width: 40px;
     min-height: 40px;
-    transition: all 120ms ease;
+    transition: var(--rjos-transition-fast);
 }
 
 .rjos-qs-footer-btn:hover {
-    background-color: #292929;
-    color: #FFFFFF;
+    background-color: @rjos-surface-hover;
+    color: @rjos-text;
 }
 """
+
+
+try:
+    from rjos_theme import apply_rjos_theme_provider
+except ImportError:
+    apply_rjos_theme_provider = None
 
 
 class RjosQuickSettings(Gtk.Window):
@@ -203,6 +201,10 @@ class RjosQuickSettings(Gtk.Window):
     def __init__(self, parent_panel):
         super().__init__()
         self.parent_panel = parent_panel
+        
+        # Aplica o CSS customizado com variáveis do RJOS
+        if apply_rjos_theme_provider:
+            apply_rjos_theme_provider(QUICK_SETTINGS_CSS)
 
         # Estado dos toggles
         self.wifi_on = True

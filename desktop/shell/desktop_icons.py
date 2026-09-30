@@ -54,6 +54,11 @@ FILE_ICONS = {
 FOLDER_ICON = "📁"
 DEFAULT_FILE_ICON = "📄"
 
+try:
+    from rjos_theme import apply_rjos_theme_provider
+except ImportError:
+    apply_rjos_theme_provider = None
+
 # ─── CSS ──────────────────────────────────────────────────────────────────────
 
 DESKTOP_ICONS_CSS = """
@@ -68,22 +73,24 @@ DESKTOP_ICONS_CSS = """
 .rjos-desktop-icon {
     background: transparent;
     border: 2px solid transparent;
-    border-radius: 10px;
+    border-radius: var(--rjos-radius-md);
     padding: 6px;
     min-width: 80px;
     min-height: 76px;
-    transition: all 120ms ease;
+    transition: var(--rjos-transition-fast);
 }
 
 .rjos-desktop-icon:hover {
-    background-color: rgba(41, 41, 41, 0.75);
-    border-color: rgba(0, 91, 150, 0.35);
+    background-color: @rjos-surface-hover;
+    border-color: @rjos-blue-dim;
+    box-shadow: var(--rjos-shadow-md);
 }
 
 .rjos-desktop-icon:active,
 .rjos-desktop-icon-selected {
-    background-color: rgba(0, 91, 150, 0.35);
-    border-color: #005B96;
+    background-color: @rjos-blue-dim;
+    border-color: @rjos-blue;
+    box-shadow: 0 0 10px @rjos-blue-dim;
 }
 
 .rjos-desktop-icon-emoji {
@@ -92,17 +99,17 @@ DESKTOP_ICONS_CSS = """
 }
 
 .rjos-desktop-icon-label {
-    color: #FFFFFF;
+    color: @rjos-text;
     font-size: 11px;
     font-weight: 500;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
 }
 
 .rjos-desktop-icon-label-editing {
-    background-color: #1E1E1E;
-    border: 1px solid #005B96;
-    border-radius: 4px;
-    color: #FFFFFF;
+    background-color: @rjos-surface;
+    border: 1px solid @rjos-blue;
+    border-radius: var(--rjos-radius-sm);
+    color: @rjos-text;
     font-size: 11px;
     padding: 2px 4px;
 }
@@ -156,6 +163,9 @@ class RjosDesktopIcons(Gtk.Window):
         self.set_decorated(False)
         self.set_resizable(False)
         self.add_css_class("rjos-desktop-icons-window")
+
+        if apply_rjos_theme_provider:
+            apply_rjos_theme_provider(DESKTOP_ICONS_CSS)
 
         if HAS_LAYER_SHELL:
             GtkLayerShell.init_for_window(self)

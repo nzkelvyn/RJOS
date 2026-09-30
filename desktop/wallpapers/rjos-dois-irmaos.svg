@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 2160" width="100%" height="100%">
+  <defs>
+    <linearGradient id="diSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0e131a" />
+      <stop offset="60%" stop-color="#121212" />
+      <stop offset="85%" stop-color="#0a263d" />
+      <stop offset="100%" stop-color="#005B96" />
+    </linearGradient>
+    <linearGradient id="diSea" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#005B96" />
+      <stop offset="35%" stop-color="#00385c" />
+      <stop offset="100%" stop-color="#121212" />
+    </linearGradient>
+    <linearGradient id="mtn1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18222d" />
+      <stop offset="100%" stop-color="#0f141a" />
+    </linearGradient>
+    <linearGradient id="mtn2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c2836" />
+      <stop offset="100%" stop-color="#11161d" />
+    </linearGradient>
+  </defs>
+
+  <!-- Céu Noturno / Crepúsculo -->
+  <rect width="3840" height="2160" fill="url(#diSky)" />
+
+  <!-- Lua / Sol Minimalista -->
+  <circle cx="1560" cy="1540" r="110" fill="#F2C94C" opacity="0.9" />
+
+  <!-- Silhueta dos Dois Irmãos (Ipanema / Leblon) -->
+  <!-- Irmão Menor -->
+  <path d="M780 1660 C900 1480, 1020 1200, 1140 1120 C1220 1060, 1310 1140, 1380 1280 L1680 1660 Z"
+        fill="url(#mtn1)" />
+
+  <!-- Irmão Maior (Pico mais alto) -->
+  <path d="M1240 1660 C1360 1340, 1480 980, 1600 890 C1680 830, 1780 900, 1860 1060 C1980 1300, 2140 1520, 2280 1660 Z"
+        fill="url(#mtn2)" />
+
+  <!-- Oceano Atlântico com perspectiva -->
+  <rect x="0" y="1650" width="3840" height="510" fill="url(#diSea)" />
+
+  <!-- Reflexos dourados e oceânicos -->
+  <ellipse cx="1560" cy="1710" rx="220" ry="12" fill="#F2C94C" opacity="0.25" />
+  <ellipse cx="1560" cy="1760" rx="340" ry="10" fill="#005B96" opacity="0.3" />
+
+  <!-- Linha minimalista da praia em Verde Tropical suave -->
+  <path d="M2180 1660 Q2700 1710 3840 1680" stroke="#00A86B" stroke-width="3" opacity="0.4" fill="none" />
+  
+  <!-- Primeiro plano -->
+  <path d="M0 1960 Q1200 1910 2400 1960 T3840 1960 L3840 2160 L0 2160 Z" fill="#121212" opacity="0.85" />
+</svg>

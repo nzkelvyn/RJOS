@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 2160" width="100%" height="100%">
+  <defs>
+    <linearGradient id="gbSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a0e14" />
+      <stop offset="50%" stop-color="#121212" />
+      <stop offset="85%" stop-color="#0e2336" />
+      <stop offset="100%" stop-color="#005B96" />
+    </linearGradient>
+
+    <linearGradient id="gbBay" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#005B96" />
+      <stop offset="30%" stop-color="#003e66" />
+      <stop offset="70%" stop-color="#00253d" />
+      <stop offset="100%" stop-color="#121212" />
+    </linearGradient>
+  </defs>
+
+  <!-- Céu Noturno Limpo -->
+  <rect width="3840" height="2160" fill="url(#gbSky)" />
+
+  <!-- Sol Dourado Minimalista Refletindo na Baía -->
+  <circle cx="2100" cy="1580" r="90" fill="#F2C94C" opacity="0.9" />
+
+  <!-- Camadas de Silhuetas da Serra dos Órgãos / Dedo de Deus ao Fundo -->
+  <path d="M0 1620 L300 1540 L450 1560 L600 1480 L800 1560 L1200 1500 L1450 1550 L1700 1460 L1950 1540 L2100 1520 L2400 1560 L2700 1490 L3000 1550 L3400 1480 L3840 1580 L3840 2160 L0 2160 Z"
+        fill="#141c26" opacity="0.5" />
+
+  <path d="M0 1660 L500 1580 L900 1630 L1300 1570 L1700 1620 L2200 1550 L2600 1610 L3100 1560 L3600 1620 L3840 1600 L3840 2160 L0 2160 Z"
+        fill="#182433" opacity="0.75" />
+
+  <!-- Espelho d'Água da Baía de Guanabara -->
+  <rect x="0" y="1660" width="3840" height="500" fill="url(#gbBay)" />
+
+  <!-- Reflexo do Sol -->
+  <ellipse cx="2100" cy="1710" rx="180" ry="8" fill="#F2C94C" opacity="0.3" />
+  <ellipse cx="2100" cy="1750" rx="280" ry="8" fill="#005B96" opacity="0.4" />
+
+  <!-- Detalhes de Silhueta de Barcos na Baía -->
+  <path d="M1200 1655 L1240 1655 L1250 1665 L1190 1665 Z" fill="#121212" />
+  <line x1="1225" y1="1635" x2="1225" y2="1655" stroke="#121212" stroke-width="2" />
+  <polygon points="1226,1637 1242,1652 1226,1652" fill="#00A86B" opacity="0.7" />
+
+  <!-- Primeiro Plano Escuro em Carvão -->
+  <path d="M0 1980 Q1000 1930 2000 1980 T3840 1980 L3840 2160 L0 2160 Z" fill="#121212" opacity="0.9" />
+</svg>

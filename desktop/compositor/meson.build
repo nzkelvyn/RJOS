@@ -11,7 +11,7 @@ cc = meson.get_compiler('c')
 
 # ─── Dependências ─────────────────────────────────────────────────────────────
 
-wlroots = dependency('wlroots-0.18',
+wlroots = dependency('wlroots-0.19',
   fallback: ['wlroots', 'wlroots'],
   default_options: ['examples=false', 'backends=auto', 'renderers=auto']
 )
@@ -30,11 +30,29 @@ add_project_arguments(
   language: 'c'
 )
 
+wayland_scanner = find_program('wayland-scanner')
+wl_datadir = wayland_proto.get_variable(pkgconfig: 'pkgdatadir')
+xdg_shell_xml = join_paths(wl_datadir, 'stable', 'xdg-shell', 'xdg-shell.xml')
+xdg_shell_h = custom_target('xdg-shell-protocol.h',
+  command: [wayland_scanner, 'server-header', '@INPUT@', '@OUTPUT@'],
+  input: xdg_shell_xml,
+  output: 'xdg-shell-protocol.h'
+)
+
+wlr_layer_shell_xml = 'protocols/wlr-layer-shell-unstable-v1.xml'
+wlr_layer_shell_h = custom_target('wlr-layer-shell-unstable-v1-protocol.h',
+  command: [wayland_scanner, 'server-header', '@INPUT@', '@OUTPUT@'],
+  input: wlr_layer_shell_xml,
+  output: 'wlr-layer-shell-unstable-v1-protocol.h'
+)
+
 # ─── Fontes ──────────────────────────────────────────────────────────────────
 
-sources = files(
+sources = [
   'src/main.c',
-)
+  xdg_shell_h,
+  wlr_layer_shell_h,
+]
 
 # ─── Executável ──────────────────────────────────────────────────────────────
 

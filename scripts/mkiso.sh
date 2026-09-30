@@ -27,6 +27,24 @@ check_root() {
   [[ $EUID -ne 0 ]] && { log_error "Execute como root: sudo ./scripts/mkiso.sh"; exit 1; }
 }
 
+check_deps() {
+  local deps=(mksquashfs xorriso grub-mkrescue mformat)
+  local missing=()
+  for dep in "${deps[@]}"; do
+    if ! command -v "$dep" &>/dev/null; then
+      missing+=("$dep")
+    fi
+  done
+  if [[ ${#missing[@]} -gt 0 ]]; then
+    log_error "Dependências faltando para gerar a ISO: ${missing[*]}"
+    echo ""
+    echo "Instale no host com:"
+    echo "  sudo apt install -y squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools"
+    exit 1
+  fi
+  log_ok "Dependências da ISO verificadas"
+}
+
 check_rootfs() {
   [[ ! -d "$ROOTFS_DIR/bin" ]] && {
     log_error "Rootfs não encontrado. Execute primeiro: sudo ./scripts/build.sh"
@@ -158,6 +176,7 @@ build_iso() {
 
 main() {
   check_root
+  check_deps
   check_rootfs
 
   rm -rf "$ISO_STAGING"

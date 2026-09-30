@@ -54,10 +54,35 @@ EOF
 echo ""
 info "Apps da desktop shell:"
 
+# Copia todos os módulos Python da shell (quick_settings, context_menu, desktop_icons, wallpaper_manager)
+for pyfile in "$PROJECT_ROOT"/desktop/shell/*.py; do
+  if [[ -f "$pyfile" ]]; then
+    base=$(basename "$pyfile")
+    cp "$pyfile" "$RJOS_APP_DIR/$base"
+    chmod 755 "$RJOS_APP_DIR/$base"
+  fi
+done
+
 install_python_app \
   "$PROJECT_ROOT/desktop/shell/rjos-shell.py" \
   "rjos-shell.py" \
   "rjos-shell"
+
+# Greeter de login se existir
+if [[ -f "$PROJECT_ROOT/desktop/login/rjos-greeter.py" ]]; then
+  install_python_app \
+    "$PROJECT_ROOT/desktop/login/rjos-greeter.py" \
+    "rjos-greeter.py" \
+    "rjos-greeter"
+fi
+
+# Dock RJOS se existir
+if [[ -f "$PROJECT_ROOT/desktop/dock/rjos-dock.py" ]]; then
+  install_python_app \
+    "$PROJECT_ROOT/desktop/dock/rjos-dock.py" \
+    "rjos-dock.py" \
+    "rjos-dock"
+fi
 
 echo ""
 info "Aplicativos:"
@@ -76,6 +101,20 @@ install_python_app \
   "$PROJECT_ROOT/apps/settings/rjos-settings.py" \
   "rjos-settings.py" \
   "rjos-settings"
+
+# ─── Módulo de tema compartilhado ─────────────────────────────────────────────
+if [[ -f "$PROJECT_ROOT/desktop/themes/rjos_theme.py" ]]; then
+  cp "$PROJECT_ROOT/desktop/themes/rjos_theme.py" "$RJOS_APP_DIR/rjos_theme.py"
+  chmod 644 "$RJOS_APP_DIR/rjos_theme.py"
+  ok "rjos_theme.py (tokens)"
+fi
+
+# ─── Wallpapers Oficiais ──────────────────────────────────────────────────────
+if [[ -d "$PROJECT_ROOT/desktop/wallpapers" ]]; then
+  mkdir -p "$ROOTFS/usr/share/backgrounds/rjos"
+  cp -r "$PROJECT_ROOT/desktop/wallpapers/." "$ROOTFS/usr/share/backgrounds/rjos/"
+  ok "Wallpapers RJOS instalados em /usr/share/backgrounds/rjos"
+fi
 
 # ─── CLI rjos ─────────────────────────────────────────────────────────────────
 echo ""
@@ -100,7 +139,7 @@ if [[ -x "$ROOTFS/usr/local/bin/rjos-theme" ]]; then
   mkdir -p "$ROOTFS/etc/skel/.config/rjos"
   cat > "$ROOTFS/etc/skel/.config/rjos/theme.json" << 'EOF'
 {
-  "accent": "cyan",
+  "accent": "ocean",
   "style": "dark",
   "font": "Inter 13",
   "mono_font": "JetBrains Mono 12",

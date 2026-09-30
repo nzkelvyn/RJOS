@@ -96,6 +96,7 @@ check_deps() {
     xorriso
     mksquashfs
     grub-mkrescue
+    mformat
   )
 
   local missing=()
@@ -111,8 +112,8 @@ check_deps() {
   if [[ ${#missing[@]} -gt 0 ]]; then
     log_error "Dependências faltando: ${missing[*]}"
     echo ""
-    echo "Instale com:"
-    echo "  sudo apt install debootstrap xorriso squashfs-tools grub-pc-bin grub-efi-amd64-bin"
+    echo "Instale no host com:"
+    echo "  sudo apt install -y debootstrap xorriso squashfs-tools grub-pc-bin grub-efi-amd64-bin mtools"
     exit 1
   fi
 
@@ -160,10 +161,10 @@ run_debootstrap() {
 mount_chroot() {
   log_info "Montando sistemas de arquivos para chroot..."
 
-  mount --bind /proc  "$ROOTFS_DIR/proc"
-  mount --bind /sys   "$ROOTFS_DIR/sys"
-  mount --bind /dev   "$ROOTFS_DIR/dev"
-  mount --bind /dev/pts "$ROOTFS_DIR/dev/pts"
+  mountpoint -q "$ROOTFS_DIR/proc" || mount --bind /proc  "$ROOTFS_DIR/proc"
+  mountpoint -q "$ROOTFS_DIR/sys" || mount --bind /sys   "$ROOTFS_DIR/sys"
+  mountpoint -q "$ROOTFS_DIR/dev" || mount --bind /dev   "$ROOTFS_DIR/dev"
+  mountpoint -q "$ROOTFS_DIR/dev/pts" || mount --bind /dev/pts "$ROOTFS_DIR/dev/pts"
 
   # Copiar resolv.conf para o chroot ter internet
   cp /etc/resolv.conf "$ROOTFS_DIR/etc/resolv.conf"
@@ -174,11 +175,11 @@ mount_chroot() {
 umount_chroot() {
   log_info "Desmontando sistemas de arquivos..."
 
-  # Usar || true para não falhar se já estiver desmontado
-  umount "$ROOTFS_DIR/dev/pts" 2>/dev/null || true
-  umount "$ROOTFS_DIR/dev"     2>/dev/null || true
-  umount "$ROOTFS_DIR/sys"     2>/dev/null || true
-  umount "$ROOTFS_DIR/proc"    2>/dev/null || true
+  # Usar -l (lazy) para desocupar mesmo com processos ou referências
+  umount -l "$ROOTFS_DIR/dev/pts" 2>/dev/null || true
+  umount -l "$ROOTFS_DIR/dev"     2>/dev/null || true
+  umount -l "$ROOTFS_DIR/sys"     2>/dev/null || true
+  umount -l "$ROOTFS_DIR/proc"    2>/dev/null || true
 
   log_ok "Desmontagens realizadas"
 }
@@ -260,8 +261,8 @@ EOF
     locale-gen en_US.UTF-8 pt_BR.UTF-8
     update-locale LANG=en_US.UTF-8
 
-    # Kernel Linux e GRUB
-    apt-get install -y linux-image-amd64 linux-headers-amd64 grub-pc initramfs-tools
+    # Kernel Linux, initramfs e live boot
+    apt-get install -y linux-image-amd64 linux-headers-amd64 grub-pc grub-efi-amd64-bin initramfs-tools live-boot
 
     # Systemd completo
     apt-get install -y systemd-timesyncd dbus
@@ -272,8 +273,7 @@ EOF
 
     # Firmware Wi-Fi e hardware
     apt-get install -y firmware-linux firmware-linux-nonfree \
-      firmware-iwlwifi firmware-realtek firmware-atheros \
-      linux-firmware
+      firmware-iwlwifi firmware-realtek firmware-atheros firmware-misc-nonfree || true
 
     # Áudio
     apt-get install -y pipewire pipewire-pulse wireplumber \
@@ -282,11 +282,11 @@ EOF
     # Ferramentas essenciais
     apt-get install -y bash bash-completion sudo \
       coreutils util-linux e2fsprogs fdisk \
-      nano vim-tiny less file
+      nano vim-tiny less file htop
 
-    # Git e ferramentas de desenvolvimento
+    # Git e ferramentas de desenvolvimento + Python
     apt-get install -y git build-essential gcc make \
-      pkg-config python3 python3-pip
+      pkg-config python3 python3-pip python3-gi python3-gi-cairo
 
     # Suporte a Flatpak
     apt-get install -y flatpak
@@ -322,17 +322,18 @@ install_graphics() {
     # wlroots (base do compositor)
     apt-get install -y libwlroots-dev || apt-get install -y libwlroots11
 
-    # GTK4 toolkit
+    # GTK4 toolkit e dependências Python dos apps RJOS
     apt-get install -y libgtk-4-dev libgtk-4-1 \
       libadwaita-1-dev libadwaita-1-0 \
-      gir1.2-gtk-4.0 gir1.2-adw-1
+      gir1.2-gtk-4.0 gir1.2-adw-1 \
+      python3-gi python3-gi-cairo
 
     # Layer shell para painel
-    apt-get install -y gtk4-layer-shell-dev || true
+    apt-get install -y gtk4-layer-shell-dev gir1.2-gtklayershell-0.1 || true
 
     # VTE para terminal
-    apt-get install -y libvte-2.91-gtk4-dev || \
-      apt-get install -y libvte-2.91-dev
+    apt-get install -y libvte-2.91-gtk4-dev gir1.2-vte-3.91 || \
+      apt-get install -y libvte-2.91-dev gir1.2-vte-2.91 || true
 
     # Mesa (OpenGL/EGL para Wayland)
     apt-get install -y mesa-vulkan-drivers mesa-va-drivers \
@@ -346,6 +347,9 @@ install_graphics() {
 
     # Polkit para elevação de privilégios
     apt-get install -y polkit
+
+    # Utilitários do desktop Wayland
+    apt-get install -y swaybg mako-notifier wl-clipboard brightnessctl || true
 
     # Flatpak portal (para apps Flatpak funcionarem no Wayland)
     apt-get install -y xdg-desktop-portal xdg-desktop-portal-wlr || true
@@ -521,6 +525,11 @@ install_rjos_binaries() {
     mkdir -p "$ROOTFS_DIR/usr/share/rjos/wallpapers"
     cp -r "$PROJECT_ROOT/desktop/wallpapers/." "$ROOTFS_DIR/usr/share/rjos/wallpapers/"
     log_ok "Wallpapers instalados"
+  fi
+
+  # Instala todos os apps e módulos Python da shell
+  if [[ -f "$SCRIPT_DIR/install-apps.sh" ]]; then
+    bash "$SCRIPT_DIR/install-apps.sh" "$ROOTFS_DIR"
   fi
 }
 

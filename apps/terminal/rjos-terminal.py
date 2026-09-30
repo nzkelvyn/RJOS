@@ -28,71 +28,72 @@ import subprocess
 # Baseada na paleta oficial RJOS
 RJOS_TERM_CSS = """
 .rjos-terminal-window {
-    background-color: #0D1B2A;
+    background-color: #121212;
 }
 .rjos-tab-bar {
-    background-color: #0D1B2A;
-    border-bottom: 1px solid #2A3F58;
+    background-color: #1E1E1E;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 .rjos-tab-btn {
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
-    color: #8BA7BF;
+    color: #B8B8B8;
     padding: 6px 16px;
     font-size: 12px;
-    transition: all 150ms ease;
+    transition: all 120ms ease;
     border-radius: 0;
 }
 .rjos-tab-btn.active {
-    color: #00D4FF;
-    border-bottom-color: #00D4FF;
+    color: #FFFFFF;
+    border-bottom-color: #005B96;
+    font-weight: 600;
 }
 .rjos-tab-btn:hover {
-    color: #E8F4FD;
-    background-color: rgba(0, 212, 255, 0.08);
+    color: #FFFFFF;
+    background-color: #292929;
 }
 .rjos-tab-new {
     background: transparent;
     border: none;
-    color: #8BA7BF;
+    color: #B8B8B8;
     padding: 6px 10px;
     font-size: 16px;
     border-radius: 4px;
 }
 .rjos-tab-new:hover {
-    color: #00D4FF;
-    background-color: rgba(0, 212, 255, 0.08);
+    color: #005B96;
+    background-color: #292929;
 }
 .rjos-titlebar {
-    background-color: #0D1B2A;
-    border-bottom: 1px solid #122840;
+    background-color: #1E1E1E;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     min-height: 38px;
 }
 .rjos-title-label {
-    color: #E8F4FD;
+    color: #FFFFFF;
     font-size: 13px;
     font-weight: 500;
 }
 """
 
-# Cores VTE (16 cores ANSI mapeadas para paleta RJOS)
+# Cores VTE (16 cores ANSI mapeadas para paleta oficial RJOS)
 VTE_COLORS = [
-    "#0D1B2A",  # 0  black
-    "#FF3D71",  # 1  red
-    "#00E676",  # 2  green
-    "#FFB300",  # 3  yellow
-    "#00D4FF",  # 4  blue (cyan no RJOS)
-    "#7B2FBE",  # 5  magenta/purple
-    "#00BCD4",  # 6  cyan
-    "#E8F4FD",  # 7  white
-    "#2A3F58",  # 8  bright black
-    "#FF6B9D",  # 9  bright red
-    "#69F0AE",  # 10 bright green
-    "#FFD54F",  # 11 bright yellow
-    "#80DFFF",  # 12 bright blue
-    "#CE93D8",  # 13 bright magenta
-    "#4DD0E1",  # 14 bright cyan
+    "#121212",  # 0  black (Carvão)
+    "#E05252",  # 1  red (Erro/Aviso crítico)
+    "#00A86B",  # 2  green (Verde Tropical)
+    "#F2C94C",  # 3  yellow (Amarelo Sol)
+    "#005B96",  # 4  blue (Azul Oceano Oficial)
+    "#7B2FBE",  # 5  magenta
+    "#0088CC",  # 6  cyan
+    "#FFFFFF",  # 7  white (Branco)
+    "#292929",  # 8  bright black (Superfície secundária)
+    "#EB6666",  # 9  bright red
+    "#00C27B",  # 10 bright green
+    "#F5D46E",  # 11 bright yellow
+    "#006FB7",  # 12 bright blue
+    "#9C4DD8",  # 13 bright magenta
+    "#33AAFF",  # 14 bright cyan
     "#FFFFFF",  # 15 bright white
 ]
 
@@ -143,11 +144,12 @@ class TerminalWidget(Gtk.Box):
         font = Pango.FontDescription.from_string("JetBrains Mono 12")
         self.term.set_font(font)
 
-        # Cores
-        fg = parse_color("#E8F4FD")
-        bg = parse_color("#0A1520")
+        # Cores Oficiais RJOS
+        fg = parse_color("#FFFFFF")
+        bg = parse_color("#121212")
 
         palette = [parse_color(c) for c in VTE_COLORS]
+        self.term.set_colors(fg, bg, palette)
         self.term.set_colors(fg, bg, palette)
 
         # Configurações

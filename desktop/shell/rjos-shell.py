@@ -26,6 +26,19 @@ gi.require_version('Adw', '1')
 
 from gi.repository import Gtk, Adw, GLib, Gdk, GdkPixbuf, Gio
 
+# Importa componentes do desktop RJOS
+try:
+    from quick_settings import RjosQuickSettings
+    HAS_QUICK_SETTINGS = True
+except ImportError:
+    HAS_QUICK_SETTINGS = False
+
+try:
+    from context_menu import RjosContextMenu
+    HAS_CONTEXT_MENU = True
+except ImportError:
+    HAS_CONTEXT_MENU = False
+
 # Tenta importar gtk4-layer-shell
 try:
     gi.require_version('GtkLayerShell', '0.1')
@@ -36,33 +49,34 @@ except (ValueError, ImportError):
     print("[WARN] gtk4-layer-shell não disponível. Painel sem ancoragem.")
 
 # ─── Paleta RJOS ─────────────────────────────────────────────────────────────
+# ─── Paleta Oficial RJOS ─────────────────────────────────────────────────────
 RJOS_CSS = """
 /* ══════════════════════════════════════════════════════════════════
-   RJOS Design System — Tokens
+   RJOS Shell Design System — Paleta Oficial
    ══════════════════════════════════════════════════════════════════ */
 
-@define-color rjos-bg-deep      #0D1B2A;
-@define-color rjos-bg-dark      #1B2838;
-@define-color rjos-surface      #1E2D40;
-@define-color rjos-surface-2    #243347;
-@define-color rjos-border       #2A3F58;
-@define-color rjos-cyan         #00D4FF;
-@define-color rjos-cyan-dim     rgba(0, 212, 255, 0.15);
-@define-color rjos-purple       #7B2FBE;
-@define-color rjos-text         #E8F4FD;
-@define-color rjos-subtext      #8BA7BF;
-@define-color rjos-success      #00E676;
-@define-color rjos-warning      #FFB300;
-@define-color rjos-error        #FF3D71;
+@define-color rjos-bg            #121212;
+@define-color rjos-surface       #1E1E1E;
+@define-color rjos-surface-hover #292929;
+@define-color rjos-surface-active #333333;
+@define-color rjos-border        rgba(255, 255, 255, 0.08);
+@define-color rjos-blue          #005B96;
+@define-color rjos-blue-hover    #006FB7;
+@define-color rjos-blue-dim      rgba(0, 91, 150, 0.2);
+@define-color rjos-green         #00A86B;
+@define-color rjos-yellow        #F2C94C;
+@define-color rjos-text          #FFFFFF;
+@define-color rjos-subtext       #B8B8B8;
+@define-color rjos-error         #E05252;
 
 /* ══════════════════════════════════════════════════════════════════
-   Panel / Topbar
+   Painel Superior (Topbar)
    ══════════════════════════════════════════════════════════════════ */
 
 .rjos-panel {
-    background-color: rgba(13, 27, 42, 0.92);
+    background-color: #1E1E1E;
     border-bottom: 1px solid @rjos-border;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
     padding: 0;
     min-height: 38px;
 }
@@ -73,21 +87,21 @@ RJOS_CSS = """
     padding: 0 8px;
 }
 
-/* Logo/distro button */
+/* Botão Logo / Menu RJOS */
 .rjos-logo-btn {
     background: transparent;
     border: none;
     border-radius: 6px;
     padding: 4px 10px;
-    color: @rjos-cyan;
+    color: @rjos-blue;
     font-weight: 800;
     font-size: 13px;
     letter-spacing: 2px;
-    transition: all 150ms ease;
+    transition: all 120ms ease;
 }
 .rjos-logo-btn:hover {
-    background-color: @rjos-cyan-dim;
-    box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+    background-color: @rjos-blue-dim;
+    color: #FFFFFF;
 }
 
 /* Botões do painel */
@@ -95,15 +109,18 @@ RJOS_CSS = """
     background: transparent;
     border: none;
     border-radius: 6px;
-    padding: 4px 8px;
+    padding: 4px 10px;
     color: @rjos-text;
     font-size: 13px;
     min-width: 0;
-    transition: all 150ms ease;
+    transition: all 120ms ease;
 }
 .rjos-panel-btn:hover {
-    background-color: @rjos-cyan-dim;
-    color: @rjos-cyan;
+    background-color: @rjos-surface-hover;
+    color: #FFFFFF;
+}
+.rjos-panel-btn:active {
+    background-color: @rjos-surface-active;
 }
 
 /* Relógio */
@@ -114,46 +131,105 @@ RJOS_CSS = """
     padding: 0 8px;
 }
 
-/* Status icons */
+/* Ícones de Status / Tray */
 .rjos-status-icon {
     color: @rjos-subtext;
     font-size: 14px;
-    padding: 4px 4px;
-    border-radius: 4px;
-    transition: all 150ms ease;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: all 120ms ease;
 }
 .rjos-status-icon:hover {
-    color: @rjos-cyan;
-    background-color: @rjos-cyan-dim;
+    color: #FFFFFF;
+    background-color: @rjos-surface-hover;
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   Launcher (App Menu)
+   Launcher (Menu de Aplicativos)
    ══════════════════════════════════════════════════════════════════ */
 
 .rjos-launcher {
-    background-color: rgba(13, 27, 42, 0.97);
+    background-color: #1E1E1E;
     border: 1px solid @rjos-border;
     border-radius: 12px;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(0, 212, 255, 0.1);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8);
+    min-width: 640px;
+    min-height: 480px;
+}
+
+.rjos-launcher-main {
     padding: 16px;
-    min-width: 480px;
-    min-height: 400px;
+}
+
+.rjos-launcher-sidebar {
+    background-color: #161616;
+    border-right: 1px solid @rjos-border;
+    padding: 12px 8px;
+    min-width: 140px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.rjos-launcher-cat-btn {
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: @rjos-subtext;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 100ms ease;
+}
+
+.rjos-launcher-cat-btn:hover {
+    background-color: @rjos-surface-hover;
+    color: @rjos-text;
+}
+
+.rjos-launcher-cat-btn-active {
+    background-color: @rjos-blue-dim;
+    color: #FFFFFF;
+    border-left: 3px solid @rjos-blue;
+    font-weight: 600;
+}
+
+.rjos-workspace-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: @rjos-subtext;
+    min-width: 26px;
+    min-height: 26px;
+    font-size: 12px;
+    padding: 0 8px;
+    transition: all 100ms ease;
+}
+
+.rjos-workspace-btn:hover {
+    background-color: @rjos-surface-hover;
+    color: @rjos-text;
+}
+
+.rjos-workspace-btn-active {
+    background-color: @rjos-blue;
+    border-color: @rjos-blue;
+    color: #FFFFFF;
+    font-weight: 600;
 }
 
 .rjos-launcher-search {
-    background-color: @rjos-surface;
+    background-color: #161616;
     border: 1px solid @rjos-border;
     border-radius: 8px;
     color: @rjos-text;
-    font-size: 15px;
+    font-size: 14px;
     padding: 10px 14px;
     margin-bottom: 12px;
-    transition: all 200ms ease;
+    transition: all 120ms ease;
 }
 .rjos-launcher-search:focus {
-    border-color: @rjos-cyan;
-    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+    border-color: @rjos-blue;
+    box-shadow: 0 0 0 2px @rjos-blue-dim;
     outline: none;
 }
 
@@ -168,16 +244,17 @@ RJOS_CSS = """
     padding: 12px 8px;
     color: @rjos-text;
     font-size: 11px;
-    transition: all 180ms ease;
+    transition: all 120ms ease;
     min-width: 80px;
 }
 .rjos-app-btn:hover {
-    background-color: @rjos-surface;
+    background-color: @rjos-surface-hover;
     border-color: @rjos-border;
-    color: @rjos-cyan;
+    color: #FFFFFF;
 }
 .rjos-app-btn:active {
-    background-color: @rjos-cyan-dim;
+    background-color: @rjos-blue-dim;
+    border-color: @rjos-blue;
     transform: scale(0.97);
 }
 
@@ -192,25 +269,35 @@ RJOS_CSS = """
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   Notificações
+   Notificações e Hierarquia Visual
    ══════════════════════════════════════════════════════════════════ */
 
 .rjos-notification {
-    background-color: rgba(30, 45, 64, 0.97);
+    background-color: #1E1E1E;
     border: 1px solid @rjos-border;
-    border-left: 3px solid @rjos-cyan;
+    border-left: 4px solid @rjos-blue;
     border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
     padding: 12px 16px;
     margin: 4px;
     min-width: 320px;
     max-width: 400px;
-    animation: slide-in 250ms ease-out;
 }
 
-@keyframes slide-in {
-    from { opacity: 0; transform: translateX(20px); }
-    to   { opacity: 1; transform: translateX(0); }
+.rjos-notification-info {
+    border-left-color: @rjos-blue;
+}
+
+.rjos-notification-success {
+    border-left-color: @rjos-green;
+}
+
+.rjos-notification-warning {
+    border-left-color: @rjos-yellow;
+}
+
+.rjos-notification-error {
+    border-left-color: @rjos-error;
 }
 
 .rjos-notification-title {
@@ -221,7 +308,7 @@ RJOS_CSS = """
 .rjos-notification-body {
     color: @rjos-subtext;
     font-size: 12px;
-    margin-top: 2px;
+    margin-top: 3px;
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -235,18 +322,18 @@ RJOS_CSS = """
 
 # ─── Lista de apps padrão do launcher ────────────────────────────────────────
 DEFAULT_APPS = [
-    {"name": "Terminal",    "icon": "🖥️",  "cmd": "rjos-terminal"},
-    {"name": "Arquivos",    "icon": "📁",  "cmd": "rjos-files"},
-    {"name": "Navegador",   "icon": "🌐",  "cmd": "firefox || chromium"},
-    {"name": "Configurações","icon": "⚙️", "cmd": "rjos-settings"},
-    {"name": "App Store",   "icon": "🏪",  "cmd": "rjos-store"},
-    {"name": "Editor",      "icon": "📝",  "cmd": "gedit || mousepad || nano"},
-    {"name": "Música",      "icon": "🎵",  "cmd": "rhythmbox || elisa"},
-    {"name": "Imagens",     "icon": "🖼️",  "cmd": "eog || gthumb"},
-    {"name": "Vídeo",       "icon": "🎬",  "cmd": "mpv || vlc"},
-    {"name": "Rede",        "icon": "📶",  "cmd": "nm-connection-editor"},
-    {"name": "Monitor",     "icon": "📊",  "cmd": "gnome-system-monitor || htop"},
-    {"name": "Calculadora", "icon": "🧮",  "cmd": "gnome-calculator || bc"},
+    {"name": "Terminal",    "icon": "🖥️",  "cmd": "rjos-terminal", "category": "Sistema"},
+    {"name": "Arquivos",    "icon": "📁",  "cmd": "rjos-files", "category": "Sistema"},
+    {"name": "Navegador",   "icon": "🌐",  "cmd": "firefox || chromium", "category": "Internet"},
+    {"name": "Configurações","icon": "⚙️", "cmd": "rjos-settings", "category": "Sistema"},
+    {"name": "App Store",   "icon": "🏪",  "cmd": "rjos-store", "category": "Sistema"},
+    {"name": "Editor",      "icon": "📝",  "cmd": "gedit || mousepad || nano", "category": "Utilitários"},
+    {"name": "Música",      "icon": "🎵",  "cmd": "rhythmbox || elisa", "category": "Mídia"},
+    {"name": "Imagens",     "icon": "🖼️",  "cmd": "eog || gthumb", "category": "Mídia"},
+    {"name": "Vídeo",       "icon": "🎬",  "cmd": "mpv || vlc", "category": "Mídia"},
+    {"name": "Rede",        "icon": "📶",  "cmd": "nm-connection-editor", "category": "Internet"},
+    {"name": "Monitor",     "icon": "📊",  "cmd": "gnome-system-monitor || htop", "category": "Sistema"},
+    {"name": "Calculadora", "icon": "🧮",  "cmd": "gnome-calculator || bc", "category": "Utilitários"},
 ]
 
 # ─── Painel Superior ──────────────────────────────────────────────────────────
@@ -257,6 +344,7 @@ class RjosPanel(Gtk.Window):
         self.app = app
         self.launcher_visible = False
         self.launcher_window  = None
+        self.quick_settings_window = None
 
         self._setup_window()
         self._build_ui()
@@ -304,6 +392,17 @@ class RjosPanel(Gtk.Window):
         activities_btn.add_css_class("rjos-panel-btn")
         activities_btn.connect("clicked", self._on_logo_clicked)
         left_box.append(activities_btn)
+
+        # Workspaces
+        self.workspace_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
+        self.workspace_box.set_margin_start(8)
+        for i in range(1, 5):
+            btn = Gtk.Button(label=str(i))
+            btn.add_css_class("rjos-workspace-btn")
+            if i == 1:
+                btn.add_css_class("rjos-workspace-btn-active")
+            self.workspace_box.append(btn)
+        left_box.append(self.workspace_box)
 
         # ── Centro: Relógio ──
         center_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -427,7 +526,16 @@ class RjosPanel(Gtk.Window):
             self.launcher_window.focus_search()
 
     def _on_volume_clicked(self, btn):
-        subprocess.Popen(["pavucontrol"], start_new_session=True)
+        """Abre painel de Quick Settings"""
+        if HAS_QUICK_SETTINGS:
+            if self.quick_settings_window and self.quick_settings_window.get_visible():
+                self.quick_settings_window.close()
+                self.quick_settings_window = None
+            else:
+                self.quick_settings_window = RjosQuickSettings(self)
+                self.quick_settings_window.present()
+        else:
+            subprocess.Popen(["pavucontrol"], start_new_session=True)
 
     def _on_power_clicked(self, btn):
         dialog = RjosPowerDialog(self)
@@ -478,7 +586,7 @@ class RjosLauncher(Gtk.Window):
                         pass
 
     def _parse_desktop_file(self, path):
-        name = exec_cmd = icon = ""
+        name = exec_cmd = icon = categories = ""
         with open(path, encoding="utf-8", errors="ignore") as f:
             for line in f:
                 line = line.strip()
@@ -488,27 +596,50 @@ class RjosLauncher(Gtk.Window):
                     exec_cmd = line[5:].replace("%u", "").replace("%f", "").strip()
                 elif line.startswith("Icon="):
                     icon = line[5:]
+                elif line.startswith("Categories="):
+                    categories = line[11:]
                 elif line == "NoDisplay=true":
                     return
         if name and exec_cmd:
-            # Evita duplicatas
+            cat = "Outros"
+            if "Network" in categories or "WebBrowser" in categories: cat = "Internet"
+            elif "Audio" in categories or "Video" in categories: cat = "Mídia"
+            elif "System" in categories or "Settings" in categories: cat = "Sistema"
+            elif "Utility" in categories: cat = "Utilitários"
+
             if not any(a["name"] == name for a in self.all_apps):
                 self.all_apps.append({
                     "name": name,
                     "icon": "📦",
                     "cmd": exec_cmd,
+                    "category": cat
                 })
 
     def _build_ui(self):
-        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        outer.add_css_class("rjos-launcher")
+        main_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        main_box.add_css_class("rjos-launcher")
 
-        # Título
-        title = Gtk.Label(label="Aplicativos")
-        title.set_halign(Gtk.Align.START)
-        title.add_css_class("rjos-clock")
-        title.set_margin_bottom(8)
-        outer.append(title)
+        # Sidebar
+        sidebar = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        sidebar.add_css_class("rjos-launcher-sidebar")
+        
+        self.cat_buttons = {}
+        cats = ["Todos", "Favoritos", "Sistema", "Internet", "Mídia", "Utilitários", "Outros"]
+        for cat in cats:
+            btn = Gtk.Button(label=cat)
+            btn.add_css_class("rjos-launcher-cat-btn")
+            if cat == "Todos":
+                btn.add_css_class("rjos-launcher-cat-btn-active")
+            btn.connect("clicked", self._on_category_clicked, cat)
+            sidebar.append(btn)
+            self.cat_buttons[cat] = btn
+        
+        main_box.append(sidebar)
+
+        # Área principal
+        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        outer.add_css_class("rjos-launcher-main")
+        outer.set_hexpand(True)
 
         # Pesquisa
         self.search_entry = Gtk.SearchEntry()
@@ -533,8 +664,17 @@ class RjosLauncher(Gtk.Window):
         scroll.set_child(self.flow)
         outer.append(scroll)
 
-        self.set_child(outer)
+        main_box.append(outer)
+        self.set_child(main_box)
+        self.active_category = "Todos"
         self._populate_apps(self.all_apps)
+
+    def _on_category_clicked(self, btn, cat):
+        for c, b in self.cat_buttons.items():
+            b.remove_css_class("rjos-launcher-cat-btn-active")
+        btn.add_css_class("rjos-launcher-cat-btn-active")
+        self.active_category = cat
+        self._filter_apps()
 
     def _populate_apps(self, apps):
         # Remove filhos existentes
@@ -561,18 +701,27 @@ class RjosLauncher(Gtk.Window):
             vbox.append(name_lbl)
 
             btn.set_child(vbox)
-            btn.connect("clicked", self._launch_app, app_data["cmd"])
-
+            # Como btn é filho de FlowBox, _on_app_activated lida com o click
+            
             self.flow.append(btn)
 
     def _on_search_changed(self, entry):
-        query = entry.get_text().lower().strip()
-        if not query:
-            self._populate_apps(self.all_apps)
-        else:
-            filtered = [a for a in self.all_apps
-                        if query in a["name"].lower()]
-            self._populate_apps(filtered)
+        self._filter_apps()
+
+    def _filter_apps(self):
+        query = self.search_entry.get_text().lower().strip()
+        filtered = self.all_apps
+        
+        if self.active_category == "Favoritos":
+            # Para simplificar, favoritos são os primeiros 10
+            filtered = self.all_apps[:10]
+        elif self.active_category != "Todos":
+            filtered = [a for a in self.all_apps if a.get("category") == self.active_category]
+            
+        if query:
+            filtered = [a for a in filtered if query in a["name"].lower()]
+            
+        self._populate_apps(filtered)
 
     def _launch_app(self, btn, cmd):
         self.hide()
@@ -696,7 +845,11 @@ class RjosShellApp(Adw.Application):
 
     def _set_wallpaper(self):
         """Define o wallpaper usando swaybg (Wayland)"""
+        local_wp = str(Path(__file__).resolve().parent.parent / "wallpapers" / "rjos-pao-de-acucar.svg")
         wallpaper_paths = [
+            "/usr/share/rjos/wallpapers/default.svg",
+            "/usr/share/rjos/wallpapers/rjos-pao-de-acucar.svg",
+            local_wp,
             "/usr/share/rjos/wallpapers/default.jpg",
             "/usr/share/rjos/wallpapers/default.png",
             os.path.expanduser("~/.config/rjos/wallpaper"),
@@ -714,9 +867,9 @@ class RjosShellApp(Adw.Application):
                 start_new_session=True
             )
         else:
-            # Sem wallpaper: usa cor sólida
+            # Sem wallpaper: usa cor sólida oficial Carvão (#121212)
             subprocess.Popen(
-                ["swaybg", "-c", "#0D1B2A"],
+                ["swaybg", "-c", "#121212"],
                 start_new_session=True
             )
 
@@ -727,7 +880,8 @@ class RjosShellApp(Adw.Application):
             "wl-paste --watch cliphist store",
             # Notificações (mako é leve e Wayland-nativo)
             "mako",
-            # Atalhos globais via wl-clipboard
+            # Dock do RJOS
+            "rjos-dock",
         ]
         for svc in services:
             subprocess.Popen(

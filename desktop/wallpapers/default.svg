@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 2160" width="100%" height="100%">
+  <defs>
+    <!-- Gradiente do Céu Noturno / Crepúsculo Carioca -->
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a" />
+      <stop offset="55%" stop-color="#121212" />
+      <stop offset="80%" stop-color="#101c29" />
+      <stop offset="96%" stop-color="#0b2c4d" />
+      <stop offset="100%" stop-color="#005B96" />
+    </linearGradient>
+
+    <!-- Brilho do Sol / Alvorecer no Horizonte -->
+    <radialGradient id="sunGlow" cx="62%" cy="76%" r="35%">
+      <stop offset="0%" stop-color="#F2C94C" stop-opacity="0.32" />
+      <stop offset="35%" stop-color="#F2C94C" stop-opacity="0.12" />
+      <stop offset="70%" stop-color="#005B96" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#121212" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Oceano / Baía de Guanabara -->
+    <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#005B96" />
+      <stop offset="25%" stop-color="#004370" />
+      <stop offset="65%" stop-color="#002b47" />
+      <stop offset="100%" stop-color="#121212" />
+    </linearGradient>
+
+    <!-- Silhueta Pão de Açúcar -->
+    <linearGradient id="mountainPao" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1b2530" />
+      <stop offset="50%" stop-color="#161c24" />
+      <stop offset="100%" stop-color="#0d1117" />
+    </linearGradient>
+
+    <!-- Silhueta Morro da Urca -->
+    <linearGradient id="mountainUrca" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f2c3a" />
+      <stop offset="100%" stop-color="#10151c" />
+    </linearGradient>
+
+    <!-- Reflexos sutis na água -->
+    <linearGradient id="reflectionGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F2C94C" stop-opacity="0.22" />
+      <stop offset="30%" stop-color="#005B96" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#121212" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Fundo do Céu -->
+  <rect width="3840" height="2160" fill="url(#skyGrad)" />
+
+  <!-- Sol Minimalista no Horizonte -->
+  <circle cx="2380" cy="1620" r="140" fill="#F2C94C" opacity="0.85" />
+  <rect x="0" y="1000" width="3840" height="800" fill="url(#sunGlow)" />
+
+  <!-- Montanhas Distantes (Serra dos Órgãos / Niterói no fundo) -->
+  <path d="M0 1680 L280 1610 L640 1640 L1040 1590 L1460 1630 L1880 1570 L2200 1600 L2600 1580 L3100 1620 L3500 1590 L3840 1640 L3840 2160 L0 2160 Z"
+        fill="#141920" opacity="0.6" />
+
+  <!-- Silhueta Icônica: Morro da Urca -->
+  <path d="M1280 1680 C1380 1520, 1540 1380, 1720 1390 C1880 1400, 1960 1520, 2060 1680 Z"
+        fill="url(#mountainUrca)" />
+
+  <!-- Linha minimalista do Bondinho -->
+  <line x1="1720" y1="1390" x2="2360" y2="920" stroke="#005B96" stroke-width="2.5" opacity="0.5" />
+  <circle cx="2040" cy="1155" r="7" fill="#F2C94C" opacity="0.8" />
+
+  <!-- Silhueta Icônica: Pão de Açúcar (Geometria Marcante) -->
+  <path d="M1980 1680 C2060 1440, 2160 1140, 2260 940 C2310 840, 2400 840, 2460 940 C2560 1120, 2680 1450, 2760 1680 Z"
+        fill="url(#mountainPao)" />
+
+  <!-- Oceano / Baía de Guanabara em camadas -->
+  <rect x="0" y="1670" width="3840" height="490" fill="url(#oceanGrad)" />
+
+  <!-- Reflexo suave do Sol e Montanha na água -->
+  <ellipse cx="2380" cy="1720" rx="280" ry="16" fill="url(#reflectionGrad)" />
+  <ellipse cx="2380" cy="1760" rx="360" ry="12" fill="url(#reflectionGrad)" opacity="0.7" />
+  <ellipse cx="2380" cy="1810" rx="460" ry="10" fill="url(#reflectionGrad)" opacity="0.5" />
+
+  <!-- Ondas geométricas no primeiro plano -->
+  <path d="M0 1880 Q960 1850 1920 1880 T3840 1880 L3840 2160 L0 2160 Z" fill="#003557" opacity="0.35" />
+  <path d="M0 1980 Q960 2010 1920 1980 T3840 1980 L3840 2160 L0 2160 Z" fill="#121212" opacity="0.8" />
+
+  <!-- Detalhe sutil RJOS na lateral inferior -->
+  <text x="3680" y="2090" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#005B96" opacity="0.45" text-anchor="end" letter-spacing="4">RJOS • RIO DE JANEIRO</text>
+</svg>

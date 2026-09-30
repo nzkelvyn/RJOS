@@ -49,11 +49,11 @@
 #include <wlr/types/wlr_viewporter.h>
 #include <wlr/util/log.h>
 
-/* ─── Paleta de cores RJOS ─────────────────────────────────────────────────── */
-#define RJOS_COLOR_BORDER_ACTIVE   { 0.0f, 0.831f, 1.0f, 1.0f }   /* #00D4FF cyan */
-#define RJOS_COLOR_BORDER_INACTIVE { 0.071f, 0.157f, 0.251f, 1.0f } /* #122840 */
-#define RJOS_COLOR_TITLEBAR_BG     { 0.071f, 0.106f, 0.165f, 0.92f } /* #121B2A glass */
-#define RJOS_COLOR_TITLEBAR_TEXT   { 0.91f, 0.957f, 0.99f, 1.0f }   /* #E8F4FD */
+/* ─── Paleta de cores oficial RJOS ─────────────────────────────────────────── */
+#define RJOS_COLOR_BORDER_ACTIVE   { 0.0f, 0.357f, 0.588f, 1.0f }   /* #005B96 Azul Oceano */
+#define RJOS_COLOR_BORDER_INACTIVE { 0.161f, 0.161f, 0.161f, 1.0f } /* #292929 Superfície secundária */
+#define RJOS_COLOR_TITLEBAR_BG     { 0.118f, 0.118f, 0.118f, 0.98f } /* #1E1E1E Superfície */
+#define RJOS_COLOR_TITLEBAR_TEXT   { 1.0f, 1.0f, 1.0f, 1.0f }       /* #FFFFFF Branco */
 #define RJOS_BORDER_WIDTH          2
 #define RJOS_TITLEBAR_HEIGHT       32
 #define RJOS_CORNER_RADIUS         8
@@ -108,6 +108,9 @@ struct rjos_server {
     /* Lista de toplevels (janelas) */
     struct wl_list              toplevels;
 
+    /* Workspace ativo (0 a 3) */
+    int                         active_workspace;
+
     /* Toplevel com foco */
     struct rjos_toplevel        *focused_toplevel;
 
@@ -154,6 +157,7 @@ struct rjos_toplevel {
     bool                        maximized;
     bool                        minimized;
     bool                        fullscreen;
+    int                         workspace;
 
     /* Geometria antes de maximizar/fullscreen */
     struct wlr_box              saved_geometry;
@@ -172,7 +176,36 @@ struct rjos_keyboard {
     struct wl_listener          destroy;
 };
 
-/* ─── Funções de foco ───────────────────────────────────────────────────────── */
+/* ─── Funções de foco e workspaces ──────────────────────────────────────────── */
+
+static void rjos_focus_toplevel(struct rjos_toplevel *toplevel,
+                                 struct wlr_surface *surface);
+
+static void rjos_set_workspace(struct rjos_server *server, int ws_index) {
+    if (ws_index < 0 || ws_index > 3) return;
+    server->active_workspace = ws_index;
+
+    struct rjos_toplevel *tl;
+    struct rjos_toplevel *focus_candidate = NULL;
+
+    wl_list_for_each(tl, &server->toplevels, link) {
+        if (!tl->mapped) continue;
+        
+        if (tl->workspace == ws_index) {
+            wlr_scene_node_set_enabled(&tl->scene_tree->node, true);
+            if (!focus_candidate) focus_candidate = tl;
+        } else {
+            wlr_scene_node_set_enabled(&tl->scene_tree->node, false);
+        }
+    }
+    
+    if (focus_candidate) {
+        rjos_focus_toplevel(focus_candidate, focus_candidate->xdg_toplevel->base->surface);
+    } else {
+        wlr_seat_keyboard_clear_focus(server->seat);
+        server->focused_toplevel = NULL;
+    }
+}
 
 static void rjos_focus_toplevel(struct rjos_toplevel *toplevel,
                                  struct wlr_surface *surface) {
@@ -304,7 +337,7 @@ static void on_request_resize(struct wl_listener *listener, void *data) {
     server->cursor_state.resize_edges  = event->edges;
 
     struct wlr_box geo;
-    wlr_xdg_surface_get_geometry(toplevel->xdg_toplevel->base, &geo);
+    geo = toplevel->xdg_toplevel->base->geometry;
     server->cursor_state.grab_geobox = geo;
     server->cursor_state.grab_geobox.x += toplevel->scene_tree->node.x;
     server->cursor_state.grab_geobox.y += toplevel->scene_tree->node.y;
@@ -328,7 +361,7 @@ static void on_request_maximize(struct wl_listener *listener, void *data) {
     if (toplevel->xdg_toplevel->requested.maximized) {
         /* Salva geometria atual antes de maximizar */
         struct wlr_box geo;
-        wlr_xdg_surface_get_geometry(toplevel->xdg_toplevel->base, &geo);
+        geo = toplevel->xdg_toplevel->base->geometry;
         toplevel->saved_geometry.x = toplevel->scene_tree->node.x;
         toplevel->saved_geometry.y = toplevel->scene_tree->node.y;
         toplevel->saved_geometry.width  = geo.width;
@@ -372,7 +405,7 @@ static void on_request_fullscreen(struct wl_listener *listener, void *data) {
 
     if (want_fullscreen && !toplevel->fullscreen) {
         struct wlr_box geo;
-        wlr_xdg_surface_get_geometry(toplevel->xdg_toplevel->base, &geo);
+        geo = toplevel->xdg_toplevel->base->geometry;
         toplevel->saved_geometry.x = toplevel->scene_tree->node.x;
         toplevel->saved_geometry.y = toplevel->scene_tree->node.y;
         toplevel->saved_geometry.width  = geo.width;
@@ -411,6 +444,7 @@ static void on_new_xdg_toplevel(struct wl_listener *listener, void *data) {
     /* Associa toplevel à scene_tree para lookup */
     toplevel->scene_tree->node.data = toplevel;
     xdg_toplevel->base->data        = toplevel->scene_tree;
+    toplevel->workspace             = server->active_workspace;
 
     /* Conecta listeners */
     toplevel->map.notify            = on_toplevel_map;
@@ -492,7 +526,7 @@ static void process_cursor_motion(struct rjos_server *server, uint32_t time) {
         int new_h = new_bottom - new_top;
 
         struct wlr_box geo_box;
-        wlr_xdg_surface_get_geometry(tl->xdg_toplevel->base, &geo_box);
+        geo_box = tl->xdg_toplevel->base->geometry;
 
         wlr_scene_node_set_position(&tl->scene_tree->node,
             new_left - geo_box.x, new_top - geo_box.y);
@@ -545,8 +579,44 @@ static void on_cursor_button(struct wl_listener *listener, void *data) {
         event->time_msec, event->button, event->state);
 
     if (event->state == WL_POINTER_BUTTON_STATE_RELEASED) {
+        /* Lógica de Window Snap (arrastar para as bordas) */
+        if (server->cursor_state.mode == RJOS_CURSOR_MOVE && server->cursor_state.toplevel) {
+            struct rjos_toplevel *tl = server->cursor_state.toplevel;
+            struct wlr_output *output = wlr_output_layout_get_center_output(server->output_layout);
+            if (output) {
+                int ow, oh;
+                wlr_output_effective_resolution(output, &ow, &oh);
+                
+                if (server->cursor->x <= 10) {
+                    /* Snap metade esquerda */
+                    wlr_xdg_toplevel_set_size(tl->xdg_toplevel, ow / 2, oh);
+                    wlr_scene_node_set_position(&tl->scene_tree->node, 0, 0);
+                } else if (server->cursor->x >= ow - 10) {
+                    /* Snap metade direita */
+                    wlr_xdg_toplevel_set_size(tl->xdg_toplevel, ow / 2, oh);
+                    wlr_scene_node_set_position(&tl->scene_tree->node, ow / 2, 0);
+                } else if (server->cursor->y <= 10) {
+                    /* Snap maximizar (topo) */
+                    if (!tl->maximized) {
+                        struct wlr_box geo;
+                        geo = tl->xdg_toplevel->base->geometry;
+                        tl->saved_geometry.x = tl->scene_tree->node.x;
+                        tl->saved_geometry.y = tl->scene_tree->node.y;
+                        tl->saved_geometry.width = geo.width;
+                        tl->saved_geometry.height = geo.height;
+                        
+                        wlr_xdg_toplevel_set_size(tl->xdg_toplevel, ow, oh);
+                        wlr_scene_node_set_position(&tl->scene_tree->node, 0, 0);
+                        tl->maximized = true;
+                        wlr_xdg_toplevel_set_maximized(tl->xdg_toplevel, true);
+                    }
+                }
+            }
+        }
+        
         /* Termina move/resize ao soltar botão */
         server->cursor_state.mode = RJOS_CURSOR_PASSTHROUGH;
+        server->cursor_state.toplevel = NULL;
         return;
     }
 
@@ -631,21 +701,38 @@ static bool rjos_handle_keybinding(struct rjos_server *server, xkb_keysym_t sym,
         }
     }
 
-    /* Super+Tab — Alterna janelas */
+    /* Super+1 a Super+4 — Trocar workspace */
+    if (super && !shift && sym >= XKB_KEY_1 && sym <= XKB_KEY_4) {
+        rjos_set_workspace(server, sym - XKB_KEY_1);
+        return true;
+    }
+
+    /* Super+Shift+1 a Super+Shift+4 — Mover janela para workspace */
+    if (super && shift && sym >= XKB_KEY_1 && sym <= XKB_KEY_4) {
+        if (server->focused_toplevel) {
+            server->focused_toplevel->workspace = sym - XKB_KEY_1;
+            wlr_scene_node_set_enabled(&server->focused_toplevel->scene_tree->node, false);
+            server->focused_toplevel = NULL;
+            rjos_set_workspace(server, server->active_workspace);
+        }
+        return true;
+    }
+
+    /* Super+Tab — Alterna janelas no workspace atual */
     if (super && sym == XKB_KEY_Tab) {
         struct rjos_toplevel *next = NULL;
         struct rjos_toplevel *tl;
         bool take_next = false;
 
         wl_list_for_each(tl, &server->toplevels, link) {
-            if (!tl->mapped) continue;
+            if (!tl->mapped || tl->workspace != server->active_workspace) continue;
             if (take_next) { next = tl; break; }
             if (tl == server->focused_toplevel) take_next = true;
         }
 
         if (!next) {
             wl_list_for_each(tl, &server->toplevels, link) {
-                if (tl->mapped) { next = tl; break; }
+                if (tl->mapped && tl->workspace == server->active_workspace) { next = tl; break; }
             }
         }
 

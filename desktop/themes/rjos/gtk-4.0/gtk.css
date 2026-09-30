@@ -1,55 +1,89 @@
-# RJOS — Tema GTK4
-# Arquivo principal de estilos da interface RJOS
-# Importado por: /usr/share/themes/RJOS/gtk-4.0/gtk.css
+/* =============================================================================
+   RJOS — Tema GTK4 Oficial
+   Identidade Visual inspirada no Rio de Janeiro
+   Paleta: Carvão (#121212), Superfície (#1E1E1E), Hover (#292929)
+           Azul Oceano (#005B96), Verde Tropical (#00A86B), Amarelo Sol (#F2C94C)
+           Branco (#FFFFFF), Texto Secundário (#B8B8B8)
+   ============================================================================= */
 
 /* ══════════════════════════════════════════════════════════════════════
-   RJOS Design Tokens
+   Design Tokens Oficiais do RJOS
    ══════════════════════════════════════════════════════════════════════ */
 
-@define-color window_bg_color          #0D1B2A;
-@define-color window_fg_color          #E8F4FD;
-@define-color headerbar_bg_color       #0A1520;
-@define-color headerbar_fg_color       #E8F4FD;
-@define-color headerbar_border_color   #1E3048;
-@define-color sidebar_bg_color         #122030;
-@define-color card_bg_color            #1B2838;
-@define-color card_shade_color         rgba(0, 0, 0, 0.15);
-@define-color accent_color             #00D4FF;
-@define-color accent_bg_color          #00D4FF;
-@define-color accent_fg_color          #0D1B2A;
-@define-color destructive_color        #FF3D71;
-@define-color destructive_bg_color     #FF3D71;
-@define-color destructive_fg_color     #FFFFFF;
-@define-color success_color            #00E676;
-@define-color warning_color            #FFB300;
-@define-color error_color              #FF3D71;
-@define-color popover_bg_color         #1B2838;
-@define-color popover_fg_color         #E8F4FD;
-@define-color dialog_bg_color          #0D1B2A;
-@define-color dialog_fg_color          #E8F4FD;
-@define-color dark_fill_bg_color       #1B2838;
-@define-color thumbnail_bg_color       #1B2838;
-@define-color shade_color              rgba(0, 0, 0, 0.3);
+@define-color rjos-blue             #005B96;  /* Azul Oceano: Identidade principal, seleção, foco */
+@define-color rjos-blue-hover       #006FB7;  /* Azul hover */
+@define-color rjos-blue-active      #004877;  /* Azul active/pressed */
+@define-color rjos-blue-dim         rgba(0, 91, 150, 0.18);
+
+@define-color rjos-green            #00A86B;  /* Verde Tropical: Sucesso, conectado, confirmação */
+@define-color rjos-green-hover      #00C27B;
+@define-color rjos-green-dim        rgba(0, 168, 107, 0.18);
+
+@define-color rjos-yellow           #F2C94C;  /* Amarelo Sol: Avisos, atenção, bateria */
+@define-color rjos-yellow-hover     #F5D46E;
+@define-color rjos-yellow-dim       rgba(242, 201, 76, 0.18);
+
+@define-color rjos-bg               #121212;  /* Carvão: Fundo principal */
+@define-color rjos-surface          #1E1E1E;  /* Superfície: Janelas, cards, painéis, menus */
+@define-color rjos-surface-hover    #292929;  /* Superfície secundária: Hover, itens interativos */
+@define-color rjos-surface-active   #333333;
+@define-color rjos-surface-border   rgba(255, 255, 255, 0.08);
+
+@define-color rjos-text             #FFFFFF;  /* Branco: Títulos, textos principais, ícones importantes */
+@define-color rjos-text-secondary   #B8B8B8;  /* Texto secundário, descrições */
+@define-color rjos-text-muted       #757575;  /* Texto esmaecido / desabilitado */
+
+@define-color rjos-error            #E05252;  /* Erro crítico (uso restrito a erros) */
+@define-color rjos-error-dim        rgba(224, 82, 82, 0.18);
+
+/* ══════════════════════════════════════════════════════════════════════
+   Mapeamento de Cores do Sistema / Adwaita / GTK4
+   ══════════════════════════════════════════════════════════════════════ */
+
+@define-color window_bg_color          @rjos-bg;
+@define-color window_fg_color          @rjos-text;
+@define-color headerbar_bg_color       @rjos-surface;
+@define-color headerbar_fg_color       @rjos-text;
+@define-color headerbar_border_color   @rjos-surface-border;
+@define-color sidebar_bg_color         @rjos-surface;
+@define-color card_bg_color            @rjos-surface;
+@define-color card_shade_color         rgba(0, 0, 0, 0.3);
+@define-color accent_color             @rjos-blue;
+@define-color accent_bg_color          @rjos-blue;
+@define-color accent_fg_color          @rjos-text;
+@define-color destructive_color        @rjos-error;
+@define-color destructive_bg_color     @rjos-error;
+@define-color destructive_fg_color     @rjos-text;
+@define-color success_color            @rjos-green;
+@define-color warning_color            @rjos-yellow;
+@define-color error_color              @rjos-error;
+@define-color popover_bg_color         @rjos-surface;
+@define-color popover_fg_color         @rjos-text;
+@define-color dialog_bg_color          @rjos-surface;
+@define-color dialog_fg_color          @rjos-text;
+@define-color dark_fill_bg_color       @rjos-surface-hover;
+@define-color thumbnail_bg_color       @rjos-surface;
+@define-color shade_color              rgba(0, 0, 0, 0.45);
 @define-color scrollbar_outline_color  transparent;
 
 /* ══════════════════════════════════════════════════════════════════════
-   Base da janela
+   Base da Janela e Superfície
    ══════════════════════════════════════════════════════════════════════ */
 
 window, .background {
-  background-color: @window_bg_color;
-  color: @window_fg_color;
+  background-color: @rjos-bg;
+  color: @rjos-text;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Header Bar (barra de título)
+   Header Bar (Barra de Título)
    ══════════════════════════════════════════════════════════════════════ */
 
 headerbar {
-  background-color: @headerbar_bg_color;
-  border-bottom: 1px solid @headerbar_border_color;
+  background-color: @rjos-surface;
+  border-bottom: 1px solid @rjos-surface-border;
   box-shadow: none;
-  color: @headerbar_fg_color;
+  color: @rjos-text;
   min-height: 42px;
   padding: 0 8px;
 }
@@ -57,10 +91,15 @@ headerbar {
 headerbar .title {
   font-weight: 600;
   font-size: 13px;
-  color: @headerbar_fg_color;
+  color: @rjos-text;
 }
 
-/* Botões de controle de janela (fechar, minimizar, maximizar) */
+headerbar .subtitle {
+  font-size: 11px;
+  color: @rjos-text-secondary;
+}
+
+/* Botões de controle de janela */
 headerbar button.close,
 headerbar button.minimize,
 headerbar button.maximize {
@@ -68,146 +107,215 @@ headerbar button.maximize {
   min-width: 14px;
   min-height: 14px;
   padding: 0;
-  margin: 0 3px;
+  margin: 0 4px;
   border: none;
   box-shadow: none;
+  transition: all 120ms ease;
 }
 
 headerbar button.close {
-  background-color: #FF3D71;
+  background-color: #E05252;
   color: transparent;
 }
-headerbar button.close:hover { background-color: #FF6B9D; }
+headerbar button.close:hover {
+  background-color: #F06A6A;
+}
 
 headerbar button.minimize {
-  background-color: #FFB300;
+  background-color: @rjos-yellow;
   color: transparent;
 }
-headerbar button.minimize:hover { background-color: #FFD54F; }
+headerbar button.minimize:hover {
+  background-color: @rjos-yellow-hover;
+}
 
 headerbar button.maximize {
-  background-color: #00E676;
+  background-color: @rjos-green;
   color: transparent;
 }
-headerbar button.maximize:hover { background-color: #69F0AE; }
+headerbar button.maximize:hover {
+  background-color: @rjos-green-hover;
+}
 
 /* ══════════════════════════════════════════════════════════════════════
-   Botões
+   Botões e Estados Interativos
    ══════════════════════════════════════════════════════════════════════ */
 
 button {
-  background-color: @card_bg_color;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: @rjos-surface;
+  border: 1px solid @rjos-surface-border;
   border-radius: 8px;
-  color: @window_fg_color;
-  padding: 7px 16px;
+  color: @rjos-text;
+  padding: 8px 16px;
   font-size: 13px;
   font-weight: 500;
-  transition: all 150ms ease;
+  transition: all 120ms ease;
   box-shadow: none;
 }
 
 button:hover {
-  background-color: #243347;
-  border-color: rgba(0, 212, 255, 0.2);
+  background-color: @rjos-surface-hover;
+  border-color: rgba(255, 255, 255, 0.14);
+  color: @rjos-text;
 }
 
 button:active {
-  background-color: rgba(0, 212, 255, 0.2);
+  background-color: @rjos-surface-active;
   transform: scale(0.98);
 }
 
+button:focus {
+  outline: 2px solid @rjos-blue;
+  outline-offset: 1px;
+}
+
+button:disabled {
+  background-color: @rjos-surface;
+  border-color: transparent;
+  color: @rjos-text-muted;
+  opacity: 0.5;
+}
+
+/* Botão Principal / Sugerido (Azul Oceano) */
 button.suggested-action {
-  background-color: @accent_bg_color;
-  color: @accent_fg_color;
+  background-color: @rjos-blue;
+  color: #FFFFFF;
   border-color: transparent;
   font-weight: 600;
 }
 button.suggested-action:hover {
-  background-color: #33DDFF;
+  background-color: @rjos-blue-hover;
+}
+button.suggested-action:active {
+  background-color: @rjos-blue-active;
+}
+button.suggested-action:focus {
+  box-shadow: 0 0 0 2px @rjos-blue-hover;
 }
 
-button.destructive-action {
-  background-color: @destructive_bg_color;
-  color: @destructive_fg_color;
+/* Botão de Sucesso (Verde Tropical) */
+button.success-action, button.success {
+  background-color: @rjos-green;
+  color: #FFFFFF;
   border-color: transparent;
+  font-weight: 600;
 }
-button.destructive-action:hover {
-  background-color: #FF6B9D;
+button.success-action:hover, button.success:hover {
+  background-color: @rjos-green-hover;
 }
 
-/* Botão plano */
+/* Botão de Atenção (Amarelo Sol) */
+button.warning-action, button.warning {
+  background-color: @rjos-yellow;
+  color: #121212;
+  border-color: transparent;
+  font-weight: 600;
+}
+button.warning-action:hover, button.warning:hover {
+  background-color: @rjos-yellow-hover;
+}
+
+/* Botão Crítico / Destrutivo */
+button.destructive-action, button.destructive {
+  background-color: @rjos-error;
+  color: #FFFFFF;
+  border-color: transparent;
+  font-weight: 600;
+}
+button.destructive-action:hover, button.destructive:hover {
+  background-color: #EB6666;
+}
+
+/* Botão Plano */
 button.flat {
   background: transparent;
   border: none;
   box-shadow: none;
 }
 button.flat:hover {
-  background-color: rgba(0, 212, 255, 0.1);
+  background-color: @rjos-surface-hover;
+}
+button.flat:active {
+  background-color: @rjos-surface-active;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Entradas de texto
+   Entradas de Texto e Busca
    ══════════════════════════════════════════════════════════════════════ */
 
 entry {
-  background-color: #122030;
-  border: 1px solid #1E3048;
-  border-radius: 7px;
-  color: @window_fg_color;
-  caret-color: @accent_color;
+  background-color: @rjos-surface;
+  border: 1px solid @rjos-surface-border;
+  border-radius: 8px;
+  color: @rjos-text;
+  caret-color: @rjos-blue;
   padding: 8px 12px;
   font-size: 13px;
-  transition: border-color 150ms ease;
+  transition: all 120ms ease;
   box-shadow: none;
 }
 
+entry:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
 entry:focus {
-  border-color: @accent_color;
-  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.15);
+  border-color: @rjos-blue;
+  box-shadow: 0 0 0 2px @rjos-blue-dim;
+  outline: none;
+}
+
+entry:disabled {
+  color: @rjos-text-muted;
+  background-color: @rjos-surface-hover;
+  opacity: 0.6;
 }
 
 entry placeholder {
-  color: #4A6580;
+  color: @rjos-text-secondary;
 }
 
-/* SearchEntry */
 searchentry {
-  background-color: #122030;
-  border: 1px solid #1E3048;
+  background-color: @rjos-surface;
+  border: 1px solid @rjos-surface-border;
   border-radius: 20px;
-  padding: 6px 12px;
+  padding: 6px 14px;
 }
 searchentry:focus {
-  border-color: @accent_color;
+  border-color: @rjos-blue;
+  box-shadow: 0 0 0 2px @rjos-blue-dim;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Switch (toggle)
+   Switch (Toggle)
    ══════════════════════════════════════════════════════════════════════ */
 
 switch {
-  background-color: #243347;
+  background-color: @rjos-surface-hover;
   border-radius: 14px;
-  border: 1px solid #2A3F58;
+  border: 1px solid @rjos-surface-border;
   min-width: 46px;
   min-height: 26px;
-  transition: all 200ms ease;
+  transition: all 160ms ease;
+}
+
+switch:hover {
+  background-color: @rjos-surface-active;
 }
 
 switch:checked {
-  background-color: @accent_color;
-  border-color: @accent_color;
+  background-color: @rjos-blue;
+  border-color: @rjos-blue;
 }
 
 switch slider {
-  background-color: white;
+  background-color: #FFFFFF;
   border-radius: 50%;
   min-width: 20px;
   min-height: 20px;
   margin: 2px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-  transition: transform 200ms ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: transform 160ms ease;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -222,24 +330,24 @@ scrollbar.vertical { min-width: 8px; }
 scrollbar.horizontal { min-height: 8px; }
 
 scrollbar trough {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 4px;
 }
 
 scrollbar slider {
-  background-color: rgba(0, 212, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   min-width: 6px;
   min-height: 6px;
   margin: 2px;
-  transition: background-color 150ms ease;
+  transition: background-color 120ms ease;
 }
 scrollbar slider:hover {
-  background-color: rgba(0, 212, 255, 0.6);
+  background-color: @rjos-blue;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Listas e linhas
+   Listas, Linhas e Seleção
    ══════════════════════════════════════════════════════════════════════ */
 
 listview, list {
@@ -250,26 +358,28 @@ listview, list {
 listview row, list row {
   border-radius: 6px;
   margin: 1px 4px;
-  padding: 4px 8px;
+  padding: 6px 10px;
+  color: @rjos-text;
   transition: background-color 100ms ease;
 }
 
 listview row:hover, list row:hover {
-  background-color: rgba(0, 212, 255, 0.08);
+  background-color: @rjos-surface-hover;
 }
 
 listview row:selected, list row:selected {
-  background-color: rgba(0, 212, 255, 0.18);
-  color: @accent_color;
+  background-color: @rjos-blue-dim;
+  color: #FFFFFF;
+  border-left: 3px solid @rjos-blue;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Cards (AdwActionRow, PreferencesGroup etc)
+   Cards e Containers (AdwActionRow, PreferencesGroup)
    ══════════════════════════════════════════════════════════════════════ */
 
 .card {
-  background-color: @card_bg_color;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: @rjos-surface;
+  border: 1px solid @rjos-surface-border;
   border-radius: 12px;
   padding: 0;
 }
@@ -279,32 +389,32 @@ listview row:selected, list row:selected {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Sidebar (Adw.NavigationSidebar, etc)
+   Sidebar
    ══════════════════════════════════════════════════════════════════════ */
 
 .sidebar {
-  background-color: @sidebar_bg_color;
-  border-right: 1px solid @headerbar_border_color;
+  background-color: @rjos-surface;
+  border-right: 1px solid @rjos-surface-border;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Popovers e menus
+   Popovers e Menus
    ══════════════════════════════════════════════════════════════════════ */
 
 popover {
-  background-color: @popover_bg_color;
-  border: 1px solid #243347;
-  border-radius: 10px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  background-color: @rjos-surface;
+  border: 1px solid @rjos-surface-border;
+  border-radius: 12px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.65);
   padding: 6px;
-  color: @popover_fg_color;
+  color: @rjos-text;
 }
 
-popover > arrow { background-color: @popover_bg_color; }
+popover > arrow { background-color: @rjos-surface; }
 
 menu, .menu {
-  background-color: @popover_bg_color;
-  border: 1px solid #243347;
+  background-color: @rjos-surface;
+  border: 1px solid @rjos-surface-border;
   border-radius: 10px;
   padding: 4px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
@@ -312,12 +422,13 @@ menu, .menu {
 
 menuitem {
   border-radius: 6px;
-  padding: 6px 10px;
+  padding: 6px 12px;
+  color: @rjos-text;
   transition: background-color 100ms ease;
 }
 menuitem:hover {
-  background-color: rgba(0, 212, 255, 0.1);
-  color: @accent_color;
+  background-color: @rjos-surface-hover;
+  color: @rjos-text;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -325,167 +436,155 @@ menuitem:hover {
    ══════════════════════════════════════════════════════════════════════ */
 
 dialog {
-  background-color: @dialog_bg_color;
+  background-color: @rjos-surface;
+  border: 1px solid @rjos-surface-border;
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+  color: @rjos-text;
 }
 
 .dialog-action-area button {
   border-radius: 8px;
-  min-width: 80px;
+  min-width: 84px;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Notebook (abas)
+   Notebook (Abas)
    ══════════════════════════════════════════════════════════════════════ */
 
 notebook > header {
-  background-color: #0A1520;
-  border-bottom: 1px solid #1E3048;
+  background-color: @rjos-surface;
+  border-bottom: 1px solid @rjos-surface-border;
   padding: 0 4px;
 }
 
 notebook tab {
   background: transparent;
   border-bottom: 2px solid transparent;
-  color: #8BA7BF;
+  color: @rjos-text-secondary;
   padding: 8px 16px;
   margin: 0 2px;
-  transition: all 150ms ease;
+  transition: all 120ms ease;
 }
 
 notebook tab:checked {
-  color: @accent_color;
-  border-bottom-color: @accent_color;
+  color: #FFFFFF;
+  border-bottom-color: @rjos-blue;
 }
 
 notebook tab:hover {
-  color: @window_fg_color;
+  color: #FFFFFF;
+  background-color: @rjos-surface-hover;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Progressbar
+   Progressbar & Sliders
    ══════════════════════════════════════════════════════════════════════ */
 
 progressbar trough {
-  background-color: #1B2838;
+  background-color: @rjos-surface-hover;
   border-radius: 4px;
   min-height: 6px;
 }
 
 progressbar progress {
-  background: linear-gradient(90deg, @accent_color 0%, #7B2FBE 100%);
+  background-color: @rjos-blue;
   border-radius: 4px;
   min-height: 6px;
-  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
 }
-
-/* ══════════════════════════════════════════════════════════════════════
-   Spinner
-   ══════════════════════════════════════════════════════════════════════ */
-
-spinner {
-  color: @accent_color;
-}
-
-/* ══════════════════════════════════════════════════════════════════════
-   Scale (slider)
-   ══════════════════════════════════════════════════════════════════════ */
 
 scale trough {
-  background-color: #1B2838;
+  background-color: @rjos-surface-hover;
   border-radius: 4px;
   min-height: 4px;
 }
 
 scale highlight {
-  background: linear-gradient(90deg, @accent_color, #7B2FBE);
+  background-color: @rjos-blue;
   border-radius: 4px;
 }
 
 scale slider {
-  background-color: @accent_color;
+  background-color: #FFFFFF;
+  border: 2px solid @rjos-blue;
   border-radius: 50%;
   min-width: 18px;
   min-height: 18px;
-  box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   transition: transform 100ms ease;
 }
 
 scale slider:hover {
-  transform: scale(1.2);
+  transform: scale(1.15);
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Tooltip
+   Tooltips, Checkbuttons e Radios
    ══════════════════════════════════════════════════════════════════════ */
 
 tooltip {
-  background-color: #243347;
-  border: 1px solid #2A3F58;
+  background-color: @rjos-surface-hover;
+  border: 1px solid @rjos-surface-border;
   border-radius: 6px;
-  color: @window_fg_color;
+  color: @rjos-text;
   font-size: 12px;
-  padding: 4px 8px;
+  padding: 5px 10px;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   Check e Radio buttons
-   ══════════════════════════════════════════════════════════════════════ */
-
 checkbutton check, radiobutton radio {
-  background-color: #122030;
-  border: 1px solid #2A3F58;
+  background-color: @rjos-surface;
+  border: 1px solid @rjos-surface-border;
   border-radius: 4px;
   min-width: 18px;
   min-height: 18px;
-  transition: all 150ms ease;
+  transition: all 120ms ease;
 }
 
 checkbutton check:checked {
-  background-color: @accent_color;
-  border-color: @accent_color;
-  color: #0D1B2A;
+  background-color: @rjos-blue;
+  border-color: @rjos-blue;
+  color: #FFFFFF;
 }
 
 radiobutton radio {
   border-radius: 50%;
 }
 radiobutton radio:checked {
-  background-color: @accent_color;
-  border-color: @accent_color;
+  background-color: @rjos-blue;
+  border-color: @rjos-blue;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   Separator
+   Separador
    ══════════════════════════════════════════════════════════════════════ */
 
 separator {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: @rjos-surface-border;
   min-width: 1px;
   min-height: 1px;
-  margin: 2px 4px;
+  margin: 3px 4px;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   AdwPreferencesGroup (grupo de configurações Adwaita)
+   Adwaita Preferences Group
    ══════════════════════════════════════════════════════════════════════ */
 
 preferencesgroup > box > list {
-  background-color: @card_bg_color;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: @rjos-surface;
+  border: 1px solid @rjos-surface-border;
   border-radius: 12px;
 }
 
 actionrow {
   border-radius: 0;
-  padding: 4px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 6px 12px;
+  border-bottom: 1px solid @rjos-surface-border;
+  color: @rjos-text;
 }
 
 actionrow:last-child { border-bottom: none; }
+actionrow:hover { background-color: @rjos-surface-hover; }
 
-/* Ícone de seta em rows navigáveis */
 actionrow .arrow {
-  color: #4A6580;
+  color: @rjos-text-secondary;
 }

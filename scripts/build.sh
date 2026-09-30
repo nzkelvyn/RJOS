@@ -254,6 +254,8 @@ EOF
 
   chroot_script "
     export DEBIAN_FRONTEND=noninteractive
+    rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock 2>/dev/null || true
+    dpkg --configure -a 2>/dev/null || true
     apt-get update -qq
 
     # Geração de locales
@@ -313,6 +315,8 @@ install_graphics() {
 
   chroot_script "
     export DEBIAN_FRONTEND=noninteractive
+    rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock 2>/dev/null || true
+    dpkg --configure -a 2>/dev/null || true
     apt-get update -qq
 
     # Wayland e utilitários
@@ -369,6 +373,11 @@ create_user() {
   local fullname="RJOS User"
 
   chroot_script "
+    # Garante que todos os grupos necessários existam
+    for grp in audio video netdev plugdev bluetooth sudo; do
+      getent group "$grp" >/dev/null || groupadd -r "$grp"
+    done
+
     # Cria usuário
     id -u $username &>/dev/null || useradd \
       --create-home \

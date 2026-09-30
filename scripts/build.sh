@@ -345,8 +345,8 @@ install_graphics() {
     # Display login manager alternativo (greetd)
     apt-get install -y greetd || true
 
-    # Polkit para elevação de privilégios
-    apt-get install -y polkit
+    # Polkit para elevação de privilégios (Debian 12 usa polkitd / pkexec)
+    apt-get install -y polkitd pkexec || apt-get install -y policykit-1 || true
 
     # Utilitários do desktop Wayland
     apt-get install -y swaybg mako-notifier wl-clipboard brightnessctl || true

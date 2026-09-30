@@ -56,7 +56,8 @@ mesa-vulkan-drivers
 mesa-va-drivers
 libgl1-mesa-dri
 seatd
-polkit
+polkitd
+pkexec
 
 # ─── GTK4 e toolkit ──────────────────────────────────────────────────────────
 libgtk-4-1

@@ -77,6 +77,50 @@ install_python_app \
   "rjos-settings.py" \
   "rjos-settings"
 
+# ─── Update System (0.1.2) ────────────────────────────────────────────────────
+echo ""
+info "Update System:"
+
+# Cria pasta de libs e copia módulo de update
+mkdir -p "$ROOTFS/usr/lib/rjos/update"
+if [[ -d "$PROJECT_ROOT/system/update" ]]; then
+  cp -r "$PROJECT_ROOT/system/update"/* "$ROOTFS/usr/lib/rjos/update/"
+  ok "Update Python Module"
+fi
+
+# Instala rjos-update (CLI)
+if [[ -f "$PROJECT_ROOT/system/cli/rjos-update" ]]; then
+  install_python_app \
+    "$PROJECT_ROOT/system/cli/rjos-update" \
+    "rjos-update" \
+    "rjos-update"
+fi
+
+# Instala rjos-update-daemon
+if [[ -f "$PROJECT_ROOT/system/daemon/rjos-update-daemon" ]]; then
+  install_python_app \
+    "$PROJECT_ROOT/system/daemon/rjos-update-daemon" \
+    "rjos-update-daemon" \
+    "rjos-update-daemon"
+fi
+
+# Instala Update Center GUI
+if [[ -f "$PROJECT_ROOT/desktop/update/update_center.py" ]]; then
+  install_python_app \
+    "$PROJECT_ROOT/desktop/update/update_center.py" \
+    "update_center.py" \
+    "rjos-update-center"
+fi
+
+# Copia Systemd Units
+if [[ -d "$PROJECT_ROOT/system/systemd" ]]; then
+  cp "$PROJECT_ROOT/system/systemd/"*.service "$ROOTFS/etc/systemd/system/" 2>/dev/null || true
+  cp "$PROJECT_ROOT/system/systemd/"*.timer "$ROOTFS/etc/systemd/system/" 2>/dev/null || true
+  # Habilita o timer por padrão no chroot
+  ln -sf /etc/systemd/system/rjos-update.timer "$ROOTFS/etc/systemd/system/timers.target.wants/rjos-update.timer" || true
+  ok "Systemd Units (rjos-update)"
+fi
+
 # ─── CLI rjos ─────────────────────────────────────────────────────────────────
 echo ""
 info "CLI:"

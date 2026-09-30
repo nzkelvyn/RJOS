@@ -10,10 +10,22 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
-[[ $EUID -ne 0 ]] && { echo -e "\033[0;31m[ERROR]\033[0m Execute como root: sudo ./scripts/make-iso.sh"; exit 1; }
+if [[ $EUID -ne 0 ]]; then
+  echo -e "\033[0;31m[ERROR]\033[0m Execute como root: sudo ./scripts/make-iso.sh"
+  exit 1
+fi
 
-echo -e "\033[0;36m[1/2] Finalizando configuração do rootfs e instalando apps RJOS...\033[0m"
-bash "$SCRIPT_DIR/build.sh" --skip-debootstrap
+SKIP_BUILD=false
+if [[ "${1:-}" == "--only-iso" || "${1:-}" == "--skip-rootfs" ]]; then
+  SKIP_BUILD=true
+fi
+
+if [[ "$SKIP_BUILD" == false ]]; then
+  echo -e "\033[0;36m[1/2] Finalizando configuração do rootfs e instalando apps RJOS...\033[0m"
+  bash "$SCRIPT_DIR/build.sh" --skip-debootstrap
+else
+  echo -e "\033[0;36m[1/2] Pulando atualização do rootfs (--only-iso)... Usando rootfs atual.\033[0m"
+fi
 
 echo -e "\033[0;36m[2/2] Gerando imagem ISO bootável (RJOS.iso)...\033[0m"
 bash "$SCRIPT_DIR/mkiso.sh"

@@ -126,8 +126,14 @@ main() {
   )
 
   # Aceleração KVM
-  if [[ "$USE_KVM" == true ]] && [[ -w /dev/kvm ]]; then
-    args+=(-enable-kvm -cpu host)
+  if [[ "$USE_KVM" == true ]]; then
+    if [[ -w /dev/kvm ]]; then
+      args+=(-enable-kvm -cpu host)
+    else
+      echo -e "${YELLOW}[WARN]${NC} /dev/kvm não possui permissão de escrita para este usuário."
+      echo -e "       Executando em modo emulado (TCG). Para habilitar KVM execute: sudo usermod -aG kvm $USER"
+      args+=(-cpu qemu64)
+    fi
   else
     args+=(-cpu qemu64)
   fi

@@ -14,13 +14,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 ROOTFS="$PROJECT_ROOT/build/rootfs"
 
-[[ $EUID -ne 0 ]] && { echo -e "${RED}[ERROR]${NC} Execute como root: sudo ./scripts/chroot.sh"; exit 1; }
+if [[ $EUID -ne 0 ]]; then
+  echo -e "${RED}[ERROR]${NC} Execute como root: sudo ./scripts/chroot.sh"
+  exit 1
+fi
 
-[[ ! -d "$ROOTFS/bin" ]] && {
+if [[ ! -d "$ROOTFS/bin" ]]; then
   echo -e "${RED}[ERROR]${NC} Rootfs não encontrado em $ROOTFS"
   echo "Execute primeiro: sudo ./scripts/build.sh"
   exit 1
-}
+fi
 
 # ─── Monta sistemas de arquivos ──────────────────────────────────────────────
 mount_fs() {

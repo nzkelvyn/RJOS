@@ -24,7 +24,10 @@ ISO_STAGING="$PROJECT_ROOT/build/iso-staging"
 ISO_OUTPUT="$PROJECT_ROOT/build/RJOS.iso"
 
 check_root() {
-  [[ $EUID -ne 0 ]] && { log_error "Execute como root: sudo ./scripts/mkiso.sh"; exit 1; }
+  if [[ $EUID -ne 0 ]]; then
+    log_error "Execute como root: sudo ./scripts/mkiso.sh"
+    exit 1
+  fi
 }
 
 check_deps() {
@@ -46,10 +49,11 @@ check_deps() {
 }
 
 check_rootfs() {
-  [[ ! -d "$ROOTFS_DIR/bin" ]] && {
-    log_error "Rootfs não encontrado. Execute primeiro: sudo ./scripts/build.sh"
+  if [[ ! -d "$ROOTFS_DIR/bin" ]]; then
+    log_error "Rootfs não encontrado em: $ROOTFS_DIR"
+    echo "Execute primeiro: sudo ./scripts/build.sh"
     exit 1
-  }
+  fi
   log_ok "Rootfs encontrado"
 }
 
@@ -59,19 +63,19 @@ create_squashfs() {
   mkdir -p "$ISO_STAGING/live"
 
   log_info "Comprimindo rootfs com mksquashfs (xz)..."
-  log_info "Isso pode levar vários minutos..."
+  log_info "Isso pode levar alguns minutos..."
+
+  local excludes_args=()
+  if [[ -f "$SCRIPT_DIR/squashfs-excludes.txt" ]]; then
+    excludes_args=(-wildcards -ef "$SCRIPT_DIR/squashfs-excludes.txt")
+  fi
 
   mksquashfs "$ROOTFS_DIR" "$ISO_STAGING/live/filesystem.squashfs" \
     -comp xz \
     -Xbcj x86 \
     -b 1M \
     -noappend \
-    -wildcards \
-    -ef "$SCRIPT_DIR/squashfs-excludes.txt" 2>/dev/null || \
-  mksquashfs "$ROOTFS_DIR" "$ISO_STAGING/live/filesystem.squashfs" \
-    -comp xz \
-    -b 1M \
-    -noappend
+    "${excludes_args[@]}"
 
   local size
   size=$(du -sh "$ISO_STAGING/live/filesystem.squashfs" | cut -f1)

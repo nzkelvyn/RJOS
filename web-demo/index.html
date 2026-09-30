@@ -12,25 +12,50 @@
        RJOS Design Tokens
     ═══════════════════════════════════════════════════════════════ */
     :root {
-      --bg-deep:     #0D1B2A;
-      --bg-dark:     #0A1520;
-      --surface:     #1B2838;
-      --surface-2:   #243347;
-      --border:      #1E3048;
-      --border-2:    #2A3F58;
-      --cyan:        #00D4FF;
-      --cyan-dim:    rgba(0,212,255,0.12);
-      --cyan-glow:   rgba(0,212,255,0.35);
-      --purple:      #7B2FBE;
-      --text:        #E8F4FD;
-      --subtext:     #8BA7BF;
-      --muted:       #4A6580;
-      --success:     #00E676;
-      --warning:     #FFB300;
+      /* Tema Pôr do Sol (Padrão) */
+      --bg-gradient-top: #F39C5A;
+      --bg-gradient-mid: #D15343;
+      --bg-gradient-bottom: #7A2A43;
+      --line-art-color: #3A1A24;
+      --dock-bg: rgba(255, 255, 255, 0.15);
+      
+      --bg-deep:     #121212;
+      --bg-dark:     #121212;
+      --surface:     rgba(30, 30, 30, 0.95);
+      --surface-2:   #292929;
+      --border:      rgba(255, 255, 255, 0.08);
+      --border-2:    rgba(255, 255, 255, 0.15);
+      --cyan:        #005B96;
+      --cyan-dim:    rgba(0, 91, 150, 0.12);
+      --cyan-glow:   rgba(0, 91, 150, 0.35);
+      --purple:      #00A86B;
+      --text:        #FFFFFF;
+      --subtext:     #E0E0E0;
+      --muted:       #A0A0A0;
+      --success:     #00A86B;
+      --warning:     #F2C94C;
       --error:       #FF3D71;
       --panel-h:     38px;
       --radius:      10px;
       --radius-lg:   14px;
+    }
+
+    body.theme-beach {
+      --bg-gradient-top: #8FC8C1;
+      --bg-gradient-mid: #8FC8C1;
+      --bg-gradient-bottom: #F1E3D3;
+      --line-art-color: #000000;
+      --text: #1A1A1A;
+      --subtext: #4A4A4A;
+      --dock-bg: rgba(255, 255, 255, 0.4);
+    }
+
+    body.theme-dawn {
+      --bg-gradient-top: #DEAE7F;
+      --bg-gradient-mid: #E2B2A0;
+      --bg-gradient-bottom: #C37D82;
+      --line-art-color: #633940;
+      --dock-bg: rgba(255, 255, 255, 0.25);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,45 +76,28 @@
     #desktop {
       position: fixed;
       inset: 0;
-      background:
-        radial-gradient(ellipse at 20% 50%, rgba(123,47,190,0.18) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 20%, rgba(0,212,255,0.12) 0%, transparent 55%),
-        radial-gradient(ellipse at 60% 80%, rgba(0,180,255,0.08) 0%, transparent 50%),
-        linear-gradient(135deg, #060E18 0%, #0D1B2A 40%, #0A1525 70%, #08121E 100%);
+      background: linear-gradient(to bottom, var(--bg-gradient-top) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-bottom) 100%);
       overflow: hidden;
     }
 
-    /* Estrelas */
-    #desktop::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 40% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 55% 28%, rgba(255,255,255,0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 70% 12%, rgba(255,255,255,0.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 85% 42%, rgba(255,255,255,0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 15% 65%, rgba(255,255,255,0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 32% 78%, rgba(255,255,255,0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 48% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 63% 68%, rgba(255,255,255,0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 78% 82%, rgba(255,255,255,0.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 92% 58%, rgba(255,255,255,0.4) 0%, transparent 100%),
-        radial-gradient(2px 2px at 5% 48%, rgba(0,212,255,0.5) 0%, transparent 100%),
-        radial-gradient(2px 2px at 90% 30%, rgba(123,47,190,0.4) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 50% 90%, rgba(0,212,255,0.3) 0%, transparent 100%);
-    }
+    /* Estrelas removidas para dar espaço ao Wallpaper Vetorial oficial */
 
     /* Ícones do desktop */
     #desktop-icons {
       position: absolute;
-      top: calc(var(--panel-h) + 20px);
-      left: 20px;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       gap: 16px;
+      background: var(--dock-bg);
+      backdrop-filter: blur(20px);
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      z-index: 1000;
     }
 
     .desktop-icon {
@@ -98,14 +106,14 @@
       align-items: center;
       gap: 5px;
       cursor: pointer;
-      padding: 10px 8px;
+      padding: 5px;
       border-radius: 10px;
-      width: 80px;
-      transition: background 0.15s;
+      width: 50px;
+      transition: background 0.15s, transform 0.2s;
     }
-    .desktop-icon:hover { background: rgba(0,212,255,0.1); }
-    .desktop-icon .di-icon { font-size: 32px; filter: drop-shadow(0 0 8px rgba(0,212,255,0.4)); }
-    .desktop-icon .di-label { font-size: 11px; color: var(--text); text-shadow: 0 1px 4px rgba(0,0,0,0.8); text-align: center; }
+    .desktop-icon:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
+    .desktop-icon .di-icon { font-size: 32px; filter: drop-shadow(0 0 8px var(--cyan-glow)); }
+    .desktop-icon .di-label { display: none; }
 
     /* ═══════════════════════════════════════════════════════════════
        TOP PANEL
@@ -114,9 +122,8 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       height: var(--panel-h);
-      background: rgba(8, 18, 30, 0.92);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(0,212,255,0.12);
+      background: transparent;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -203,24 +210,24 @@
     ═══════════════════════════════════════════════════════════════ */
     #launcher {
       position: fixed;
-      top: var(--panel-h);
-      left: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       width: 520px;
       background: rgba(8, 18, 30, 0.97);
       border: 1px solid var(--border);
-      border-top: none;
-      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-      box-shadow: 0 8px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,212,255,0.08);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,212,255,0.08);
       padding: 16px;
       z-index: 8900;
       display: none;
-      animation: slideDown 0.2s ease-out;
+      animation: launcherPop 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
     #launcher.visible { display: block; }
 
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-8px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @keyframes launcherPop {
+      from { opacity: 0; transform: translate(-50%, -45%) scale(0.95); }
+      to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
 
     #launcher-search {
@@ -795,7 +802,7 @@
     #boot-screen {
       position: fixed;
       inset: 0;
-      background: #020810;
+      background: var(--bg-deep);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -805,38 +812,30 @@
     }
     #boot-screen.fade-out { opacity: 0; pointer-events: none; }
 
-    .boot-logo {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 15px;
-      line-height: 1.2;
-      color: var(--cyan);
-      text-shadow: 0 0 20px var(--cyan-glow);
-      text-align: center;
-      margin-bottom: 32px;
-      white-space: pre;
-      animation: glow 2s ease-in-out infinite alternate;
+    .boot-logo-svg {
+      margin-bottom: 40px;
+      animation: bootPulse 2s infinite alternate;
     }
-
-    @keyframes glow {
-      from { text-shadow: 0 0 10px var(--cyan-glow); }
-      to   { text-shadow: 0 0 30px var(--cyan), 0 0 60px rgba(0,212,255,0.3); }
+    @keyframes bootPulse {
+      from { filter: drop-shadow(0 0 10px var(--cyan-glow)); }
+      to   { filter: drop-shadow(0 0 30px var(--cyan)); }
     }
 
     .boot-progress {
-      width: 300px;
-      height: 3px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 2px;
+      width: 280px;
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 4px;
       overflow: hidden;
       margin-bottom: 16px;
     }
     .boot-progress-bar {
       height: 100%;
-      background: linear-gradient(90deg, var(--cyan), var(--purple));
-      border-radius: 2px;
+      background: var(--cyan);
+      border-radius: 4px;
       width: 0%;
       transition: width 0.3s ease;
-      box-shadow: 0 0 10px var(--cyan-glow);
+      box-shadow: 0 0 12px var(--cyan-glow);
     }
     .boot-status {
       font-size: 11px;
@@ -844,6 +843,80 @@
       font-family: 'JetBrains Mono', monospace;
       min-height: 16px;
     }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LOGIN SCREEN
+    ═══════════════════════════════════════════════════════════════ */
+    #login-screen {
+      position: fixed;
+      inset: 0;
+      background: url('../desktop/wallpapers/rjos-copacabana.svg') center center / cover no-repeat,
+                  linear-gradient(to bottom, #8FC8C1 0%, #8FC8C1 50%, #F1E3D3 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 99000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+      backdrop-filter: blur(15px);
+    }
+    #login-screen.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .login-avatar {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .login-name {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 30px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    }
+    #login-form {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .login-input {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 10px 18px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 240px;
+      backdrop-filter: blur(10px);
+    }
+    .login-input:focus { border-color: var(--cyan); }
+    .login-input::placeholder { color: var(--muted); }
+    .login-submit {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--cyan);
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s, filter 0.2s;
+    }
+    .login-submit:hover { filter: brightness(1.2); }
+    .login-submit:active { transform: scale(0.92); }
 
     /* ═══════════════════════════════════════════════════════════════
        CONTEXT MENU
@@ -919,36 +992,57 @@
     /* scrollbar global */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.25); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.5); }
+    ::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0, 91, 150, 0.5); }
   </style>
 </head>
 <body>
 
 <!-- ═══ BOOT SCREEN ════════════════════════════════════════════════ -->
 <div id="boot-screen">
-  <div class="boot-logo">  ██████╗      ██╗ ██████╗ ███████╗
-  ██╔══██╗     ██║██╔═══██╗██╔════╝
-  ██████╔╝     ██║██║   ██║███████╗
-  ██╔══██╗██   ██║██║   ██║╚════██║
-  ██║  ██║╚█████╔╝╚██████╔╝███████║
-  ╚═╝  ╚═╝ ╚════╝  ╚═════╝ ╚══════╝</div>
+  <div class="boot-logo-svg">
+    <svg width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="45" stroke="var(--cyan)" stroke-width="4" stroke-linecap="round" stroke-dasharray="70 200" transform="rotate(-90 50 50)">
+        <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="50" cy="50" r="30" stroke="var(--success)" stroke-width="3" stroke-linecap="round" stroke-dasharray="40 100" transform="rotate(45 50 50)">
+        <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <text x="50" y="56" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="bold" fill="var(--text)" text-anchor="middle" style="text-shadow: 0 0 10px var(--cyan-glow);">RJOS</text>
+    </svg>
+  </div>
   <div class="boot-progress"><div class="boot-progress-bar" id="boot-bar"></div></div>
   <div class="boot-status" id="boot-status">Iniciando kernel Linux 6.6.1-rjos...</div>
+</div>
+
+<!-- ═══ LOGIN SCREEN ═════════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-avatar">
+    <svg width="50" height="50" viewBox="0 0 24 24" fill="var(--text)" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C9.24 2 7 4.24 7 7C7 9.76 9.24 12 12 12C14.76 12 17 9.76 17 7C17 4.24 14.76 2 12 2ZM12 14C9.33 14 4 15.34 4 18V22H20V18C20 15.34 14.67 14 12 14Z"/></svg>
+  </div>
+  <div class="login-name">rjos</div>
+  <form id="login-form" onsubmit="event.preventDefault(); doLogin();">
+    <input type="password" id="login-pass" class="login-input" placeholder="Senha" />
+    <button type="submit" class="login-submit">→</button>
+  </form>
 </div>
 
 <!-- ═══ DESKTOP ═════════════════════════════════════════════════════ -->
 <div id="desktop">
   <div id="desktop-icons">
-    <div class="desktop-icon" ondblclick="openApp('files')">
+    <div class="desktop-icon" onclick="toggleLauncher()">
+      <span class="di-icon">💠</span>
+      <span class="di-label">Atividades</span>
+    </div>
+    <div class="desktop-icon" onclick="openApp('files')">
       <span class="di-icon">📁</span>
       <span class="di-label">Arquivos</span>
     </div>
-    <div class="desktop-icon" ondblclick="openApp('terminal')">
+    <div class="desktop-icon" onclick="openApp('terminal')">
       <span class="di-icon">🖥️</span>
       <span class="di-label">Terminal</span>
     </div>
-    <div class="desktop-icon" ondblclick="openApp('settings')">
+    <div class="desktop-icon" onclick="openApp('settings')">
       <span class="di-icon">⚙️</span>
       <span class="di-label">Configurações</span>
     </div>
@@ -959,8 +1053,6 @@
 <div id="panel">
   <div class="panel-left">
     <button id="logo-btn" onclick="toggleLauncher()">RJOS</button>
-    <div class="panel-sep"></div>
-    <button class="panel-btn" onclick="toggleLauncher()">Atividades</button>
   </div>
 
   <div class="panel-center">
@@ -1454,9 +1546,13 @@ function createWindow(id, title, icon, width, height, content) {
   const win = document.createElement('div');
   win.className = 'rjos-window focused';
   win.id = 'win-' + id;
+  
+  const startX = Math.max(0, (window.innerWidth - width) / 2) + offsetX;
+  const startY = Math.max(38, (window.innerHeight - height) / 2) + offsetX;
+
   win.style.cssText = `
-    left: ${80 + offsetX}px;
-    top: ${60 + offsetX}px;
+    left: ${startX}px;
+    top: ${startY}px;
     width: ${width}px;
     height: ${height}px;
     position: absolute;
@@ -2238,6 +2334,7 @@ document.addEventListener('click', e => {
       !e.target.closest('#launcher') &&
       !e.target.closest('#logo-btn') &&
       !e.target.closest('.panel-btn') &&
+      !e.target.closest('.desktop-icon') &&
       !e.target.closest('#net-popup') &&
       !e.target.closest('#power-popup')) {
     hideAllPopups();
@@ -2277,10 +2374,21 @@ async function runBoot() {
 
   await new Promise(r => setTimeout(r, 400));
   document.getElementById('boot-screen').classList.add('fade-out');
-  setTimeout(() => document.getElementById('boot-screen').remove(), 900);
+  
+  setTimeout(() => {
+    document.getElementById('boot-screen').remove();
+    document.getElementById('login-screen').classList.add('visible');
+    setTimeout(() => { document.getElementById('login-pass').focus(); }, 400);
+  }, 900);
+}
 
-  await new Promise(r => setTimeout(r, 300));
-  showToast('👋 Bem-vindo', 'RJOS 1.0 — Nebula. Duplo clique nos ícones para abrir apps.');
+function doLogin() {
+  document.getElementById('login-screen').classList.remove('visible');
+  document.getElementById('login-screen').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('login-screen').remove();
+    showToast('👋 Bem-vindo', 'RJOS 1.0 — Nebula. Duplo clique nos ícones para abrir apps.');
+  }, 800);
 }
 
 runBoot();

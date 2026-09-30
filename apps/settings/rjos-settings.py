@@ -22,29 +22,30 @@ from gi.repository import Gtk, Adw, GLib, Gdk, Gio
 
 RJOS_SETTINGS_CSS = """
 .rjos-settings-sidebar {
-    background-color: #0D1B2A;
-    border-right: 1px solid #1E3048;
+    background-color: #1E1E1E;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
     min-width: 220px;
 }
 .rjos-settings-nav-item {
     border-radius: 8px;
     margin: 2px 8px;
     padding: 10px 14px;
-    color: #8BA7BF;
+    color: #B8B8B8;
     font-size: 13px;
-    transition: all 150ms ease;
+    transition: all 120ms ease;
 }
 .rjos-settings-nav-item:hover {
-    background-color: rgba(0, 212, 255, 0.1);
-    color: #E8F4FD;
+    background-color: #292929;
+    color: #FFFFFF;
 }
 .rjos-settings-nav-item.active {
-    background-color: rgba(0, 212, 255, 0.18);
-    color: #00D4FF;
+    background-color: rgba(0, 91, 150, 0.22);
+    color: #FFFFFF;
+    border-left: 3px solid #005B96;
     font-weight: 600;
 }
 .rjos-settings-section-title {
-    color: #4A6580;
+    color: #757575;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 1px;
@@ -52,23 +53,23 @@ RJOS_SETTINGS_CSS = """
     text-transform: uppercase;
 }
 .rjos-settings-content {
-    background-color: #0F1F30;
+    background-color: #121212;
 }
 .rjos-settings-page-title {
-    color: #E8F4FD;
+    color: #FFFFFF;
     font-size: 22px;
     font-weight: 700;
     margin-bottom: 16px;
 }
 .rjos-settings-group {
-    background-color: #1B2838;
-    border: 1px solid #1E3048;
+    background-color: #1E1E1E;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
     margin-bottom: 16px;
     overflow: hidden;
 }
 .rjos-settings-row {
-    border-bottom: 1px solid #1E3048;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     padding: 14px 16px;
     transition: background-color 100ms ease;
 }
@@ -76,15 +77,15 @@ RJOS_SETTINGS_CSS = """
     border-bottom: none;
 }
 .rjos-settings-row:hover {
-    background-color: rgba(0, 212, 255, 0.05);
+    background-color: #292929;
 }
 .rjos-settings-row-title {
-    color: #E8F4FD;
+    color: #FFFFFF;
     font-size: 13px;
     font-weight: 500;
 }
 .rjos-settings-row-subtitle {
-    color: #8BA7BF;
+    color: #B8B8B8;
     font-size: 11px;
     margin-top: 2px;
 }
@@ -255,12 +256,12 @@ def build_system_page():
 
 ACCENT_OPTIONS = [
     # (label exibido, nome interno para rjos-theme, cor hex)
-    ("Ciano  #00D4FF",  "cyan",   "#00D4FF"),
-    ("Roxo   #7B2FBE",  "purple", "#7B2FBE"),
-    ("Verde  #00E676",  "green",  "#00E676"),
-    ("Laranja #FF8C00", "orange", "#FF8C00"),
-    ("Rosa   #FF3D71",  "pink",   "#FF3D71"),
-    ("Azul   #2979FF",  "blue",   "#2979FF"),
+    ("Azul Oceano (Oficial) #005B96", "ocean",  "#005B96"),
+    ("Verde Tropical #00A86B",        "green",  "#00A86B"),
+    ("Amarelo Sol    #F2C94C",        "yellow", "#F2C94C"),
+    ("Azul Royal     #2979FF",        "blue",   "#2979FF"),
+    ("Ciano          #00D4FF",        "cyan",   "#00D4FF"),
+    ("Roxo           #7B2FBE",        "purple", "#7B2FBE"),
 ]
 
 STYLE_OPTIONS = [

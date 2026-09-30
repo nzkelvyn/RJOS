@@ -30,54 +30,54 @@ mkdir -p "$GTK4_CSS_DIR"
 
 # ─── Paleta de cores disponíveis ──────────────────────────────────────────────
 declare -A ACCENT_COLORS=(
-    ["cyan"]="#00D4FF"
+    ["ocean"]="#005B96"
+    ["green"]="#00A86B"
+    ["yellow"]="#F2C94C"
+    ["blue"]="#005B96"
+    ["cyan"]="#0077B6"
     ["purple"]="#7B2FBE"
-    ["green"]="#00E676"
-    ["orange"]="#FF8C00"
-    ["pink"]="#FF3D71"
-    ["blue"]="#2979FF"
-    ["teal"]="#00BCD4"
-    ["yellow"]="#FFD600"
+    ["orange"]="#E65100"
+    ["teal"]="#00897B"
 )
 
 declare -A ACCENT_DIM=(
-    ["cyan"]="rgba(0,212,255,0.12)"
-    ["purple"]="rgba(123,47,190,0.15)"
-    ["green"]="rgba(0,230,118,0.12)"
-    ["orange"]="rgba(255,140,0,0.12)"
-    ["pink"]="rgba(255,61,113,0.12)"
-    ["blue"]="rgba(41,121,255,0.12)"
-    ["teal"]="rgba(0,188,212,0.12)"
-    ["yellow"]="rgba(255,214,0,0.12)"
+    ["ocean"]="rgba(0,91,150,0.18)"
+    ["green"]="rgba(0,168,107,0.18)"
+    ["yellow"]="rgba(242,201,76,0.18)"
+    ["blue"]="rgba(0,91,150,0.18)"
+    ["cyan"]="rgba(0,119,182,0.18)"
+    ["purple"]="rgba(123,47,190,0.18)"
+    ["orange"]="rgba(230,81,0,0.18)"
+    ["teal"]="rgba(0,137,123,0.18)"
 )
 
 declare -A ACCENT_FG=(
-    ["cyan"]="#0D1B2A"
-    ["purple"]="#FFFFFF"
-    ["green"]="#0D1B2A"
-    ["orange"]="#0D1B2A"
-    ["pink"]="#FFFFFF"
+    ["ocean"]="#FFFFFF"
+    ["green"]="#FFFFFF"
+    ["yellow"]="#121212"
     ["blue"]="#FFFFFF"
-    ["teal"]="#0D1B2A"
-    ["yellow"]="#0D1B2A"
+    ["cyan"]="#FFFFFF"
+    ["purple"]="#FFFFFF"
+    ["orange"]="#FFFFFF"
+    ["teal"]="#FFFFFF"
 )
 
 # ─── Temas de fundo ───────────────────────────────────────────────────────────
 declare -A STYLE_BG=(
-    ["dark"]="#0D1B2A"
-    ["light"]="#F0F4F8"
+    ["dark"]="#121212"
+    ["light"]="#F5F5F5"
     ["oled"]="#000000"
 )
 
 declare -A STYLE_SURFACE=(
-    ["dark"]="#1B2838"
+    ["dark"]="#1E1E1E"
     ["light"]="#FFFFFF"
-    ["oled"]="#0A0A0A"
+    ["oled"]="#0D0D0D"
 )
 
 declare -A STYLE_TEXT=(
-    ["dark"]="#E8F4FD"
-    ["light"]="#0D1B2A"
+    ["dark"]="#FFFFFF"
+    ["light"]="#121212"
     ["oled"]="#FFFFFF"
 )
 
@@ -86,7 +86,7 @@ read_config() {
     if [[ -f "$THEME_CONFIG" ]]; then
         cat "$THEME_CONFIG"
     else
-        echo '{"accent":"cyan","style":"dark","font":"Inter 13","mono_font":"JetBrains Mono 12","transparency":true,"animations":true}'
+        echo '{"accent":"ocean","style":"dark","font":"Inter 13","mono_font":"JetBrains Mono 12","transparency":true,"animations":true}'
     fi
 }
 
@@ -121,24 +121,26 @@ generate_css_override() {
     local transparency
     transparency=$(get_config_value "transparency")
 
-    accent_name="${accent_name:-cyan}"
+    accent_name="${accent_name:-ocean}"
     style="${style:-dark}"
     font="${font:-Inter 13}"
     mono_font="${mono_font:-JetBrains Mono 12}"
 
-    local accent_hex="${ACCENT_COLORS[$accent_name]:-${ACCENT_COLORS[cyan]}}"
-    local accent_dim="${ACCENT_DIM[$accent_name]:-${ACCENT_DIM[cyan]}}"
-    local accent_fg="${ACCENT_FG[$accent_name]:-${ACCENT_FG[cyan]}}"
+    local accent_hex="${ACCENT_COLORS[$accent_name]:-${ACCENT_COLORS[ocean]}}"
+    local accent_dim="${ACCENT_DIM[$accent_name]:-${ACCENT_DIM[ocean]}}"
+    local accent_fg="${ACCENT_FG[$accent_name]:-${ACCENT_FG[ocean]}}"
     local bg="${STYLE_BG[$style]:-${STYLE_BG[dark]}}"
     local surface="${STYLE_SURFACE[$style]:-${STYLE_SURFACE[dark]}}"
     local text="${STYLE_TEXT[$style]:-${STYLE_TEXT[dark]}}"
 
-    # Calcula versão um pouco mais clara do bg para headerbar
+    # Superfície para headerbar
     local headerbar_bg
     if [[ "$style" == "oled" ]]; then
-        headerbar_bg="#050505"
+        headerbar_bg="#0A0A0A"
+    elif [[ "$style" == "light" ]]; then
+        headerbar_bg="#EAEAEA"
     else
-        headerbar_bg="#0A1520"
+        headerbar_bg="#1E1E1E"
     fi
 
     cat > "$GTK4_OVERRIDE" << EOF

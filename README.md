@@ -13,7 +13,8 @@
 
 **Uma distribuição Linux com identidade própria**
 
-![Status](https://img.shields.io/badge/status-Phase%201%20%E2%80%94%20Base-blue)
+![Version](https://img.shields.io/badge/version-0.1.2%20Foundation%20Update-success)
+![Status](https://img.shields.io/badge/status-Phase%202%20%E2%80%94%20Infrastructure-blue)
 ![Base](https://img.shields.io/badge/base-Debian%20Stable-red)
 ![Display](https://img.shields.io/badge/display-Wayland-purple)
 ![Compositor](https://img.shields.io/badge/compositor-wlroots-cyan)

@@ -58,6 +58,62 @@ RJOS_SHARED_CSS_VARS = f"""
 
 @define-color rjos-error            {RJOS_ERROR};
 @define-color rjos-error-dim        {RJOS_ERROR_DIM};
+
+/* Global Design System Variables */
+* {
+    /* Radii */
+    --rjos-radius-sm: 4px;
+    --rjos-radius-md: 8px;
+    --rjos-radius-lg: 12px;
+    --rjos-radius-xl: 18px;
+    --rjos-radius-pill: 9999px;
+
+    /* Spacing */
+    --rjos-space-xs: 4px;
+    --rjos-space-sm: 8px;
+    --rjos-space-md: 16px;
+    --rjos-space-lg: 24px;
+    --rjos-space-xl: 32px;
+
+    /* Shadows */
+    --rjos-shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+    --rjos-shadow-md: 0 4px 12px rgba(0,0,0,0.2);
+    --rjos-shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+    --rjos-shadow-xl: 0 16px 48px rgba(0,0,0,0.6);
+
+    /* Typography */
+    --rjos-font-family: "Inter", sans-serif;
+    
+    /* Transitions */
+    --rjos-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --rjos-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Classes */
+.rjos-surface {
+    background-color: @rjos-surface;
+    border: 1px solid @rjos-surface-border;
+    border-radius: var(--rjos-radius-md);
+    box-shadow: var(--rjos-shadow-md);
+    color: @rjos-text;
+}
+
+.rjos-surface-hover:hover {
+    background-color: @rjos-surface-hover;
+}
+
+.rjos-dock {
+    background-color: alpha(@rjos-bg, 0.85);
+    border: 1px solid @rjos-surface-border;
+    border-radius: var(--rjos-radius-xl);
+    box-shadow: var(--rjos-shadow-lg);
+}
+
+.rjos-panel {
+    background-color: alpha(@rjos-bg, 0.95);
+    color: @rjos-text;
+    border-bottom: 1px solid @rjos-surface-border;
+}
 """
 
 # ─── Helper de CSS Provider para GTK4 ─────────────────────────────────────────

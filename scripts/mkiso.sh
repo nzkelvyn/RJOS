@@ -108,8 +108,8 @@ set default=0
 set timeout=5
 
 # Cores RJOS
-set color_normal=cyan/black
-set color_highlight=black/cyan
+set color_normal=light-gray/black
+set color_highlight=white/blue
 
 # Resolução
 set gfxmode=1920x1080x32,1280x720x32,auto

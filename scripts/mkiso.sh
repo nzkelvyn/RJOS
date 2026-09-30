@@ -140,38 +140,27 @@ EOF
 }
 
 build_iso() {
-  log_section "Gerando ISO com xorriso"
+  log_section "Gerando imagem ISO inicializável"
 
-  xorriso -as mkisofs \
-    -iso-level 3 \
-    -full-iso9660-filenames \
-    -volid "RJOS_LIVE" \
-    -output "$ISO_OUTPUT" \
-    -eltorito-boot boot/grub/i386-pc/eltorito.img \
-      -no-emul-boot \
-      -boot-load-size 4 \
-      -boot-info-table \
-      --eltorito-catalog boot/grub/boot.cat \
-    --grub2-boot-info \
-    --grub2-mbr /usr/lib/grub/i386-pc/boot_hybrid.img \
-    -partition_offset 16 \
-    --mbr-force-bootable \
-    -append_partition 2 28732ac11ff8d211ba4b00a0c93ec93b \
-      /usr/lib/grub/x86_64-efi/cdboot.efi \
-    -appended_part_as_gpt \
-    -iso_mbr_part_type a2a0d0ebe5b9334487c068b6b72699c7 \
-    -m "--interval:appended_partition_2:all::" \
-    -m "--interval:local_fs:x86-sys:" \
-    "$ISO_STAGING" 2>/dev/null || \
+  mkdir -p "$(dirname "$ISO_OUTPUT")"
+
+  log_info "Executando grub-mkrescue (suporte híbrido BIOS + UEFI)..."
   grub-mkrescue \
     --output="$ISO_OUTPUT" \
     --modules="linux normal iso9660 all_video boot lvm" \
     "$ISO_STAGING" -- \
     -volid "RJOS_LIVE"
 
+  # Ajusta permissões para o usuário host poder executar sem sudo
+  if [[ -n "${SUDO_USER:-}" ]]; then
+    chown "$SUDO_USER:$SUDO_USER" "$ISO_OUTPUT" 2>/dev/null || true
+    chown -R "$SUDO_USER:$SUDO_USER" "$PROJECT_ROOT/build" 2>/dev/null || true
+  fi
+  chmod 777 "$PROJECT_ROOT/build" "$ISO_OUTPUT" 2>/dev/null || true
+
   local iso_size
   iso_size=$(du -sh "$ISO_OUTPUT" | cut -f1)
-  log_ok "ISO gerada: $ISO_OUTPUT ($iso_size)"
+  log_ok "ISO gerada com sucesso: $ISO_OUTPUT ($iso_size)"
 }
 
 main() {

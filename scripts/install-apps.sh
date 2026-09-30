@@ -161,6 +161,7 @@ if [[ -d "$PROJECT_ROOT/desktop/themes/rjos" ]]; then
 fi
 
 # ─── Configura tema padrão via gsettings ──────────────────────────────────────
+mkdir -p "$ROOTFS/etc/dconf/db/site.d"
 cat > "$ROOTFS/etc/dconf/db/site.d/rjos-defaults" << 'EOF'
 [org/gnome/desktop/interface]
 gtk-theme='RJOS'
@@ -171,6 +172,7 @@ icon-theme='hicolor'
 cursor-theme='Adwaita'
 cursor-size=24
 EOF
+chroot "$ROOTFS" dconf update 2>/dev/null || true
 
 # ─── Arquivo .desktop para apps ───────────────────────────────────────────────
 echo ""

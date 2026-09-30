@@ -433,25 +433,26 @@ configure_systemd() {
   fi
 
   chroot_script "
-    # Habilita serviços essenciais
-    systemctl enable NetworkManager
-    systemctl enable systemd-timesyncd
-    systemctl enable systemd-resolved
+    # Habilita serviços essenciais (com tolerância se o pacote não estiver presente)
+    systemctl enable NetworkManager 2>/dev/null || true
+    systemctl enable systemd-timesyncd 2>/dev/null || true
+    systemctl enable systemd-resolved 2>/dev/null || true
 
     # Habilita PipeWire (via user service)
     # Será ativado por socket no login do usuário
-    systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service
+    systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service 2>/dev/null || true
 
-    # Se greetd disponível, use para login gráfico
-    if systemctl list-unit-files | grep -q greetd; then
-      systemctl enable greetd
+    # Habilita sessão gráfica RJOS no boot
+    if systemctl list-unit-files 2>/dev/null | grep -q rjos-session; then
+      systemctl enable rjos-session.service 2>/dev/null || true
+    elif systemctl list-unit-files 2>/dev/null | grep -q greetd; then
+      systemctl enable greetd 2>/dev/null || true
     else
-      # Fallback: login via getty no TTY1 que inicia Wayland
-      systemctl enable getty@tty1
+      systemctl enable getty@tty1 2>/dev/null || true
     fi
 
     # Configura target padrão como graphical
-    systemctl set-default graphical.target
+    systemctl set-default graphical.target 2>/dev/null || true
   "
 
   log_ok "systemd configurado"
@@ -559,9 +560,10 @@ cleanup_rootfs() {
     # Remove arquivos de log desnecessários
     find /var/log -type f -delete
 
-    # Remove resolv.conf temporário (será gerido pelo NetworkManager)
+    # Configura resolv.conf padrão (o NetworkManager gerenciará após conectar)
     rm -f /etc/resolv.conf
-    ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+    echo "nameserver 1.1.1.1" > /etc/resolv.conf
+    echo "nameserver 8.8.8.8" >> /etc/resolv.conf
   "
 
   log_ok "Rootfs limpo"

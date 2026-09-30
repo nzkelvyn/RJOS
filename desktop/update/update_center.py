@@ -95,6 +95,17 @@ class RjosUpdateCenter(Gtk.ApplicationWindow):
     def on_update_clicked(self, btn):
         self.update_btn.set_sensitive(False)
         self.later_btn.set_sensitive(False)
+        
+        ok, errors = self.manager.run_preflight()
+        if not ok:
+            self.title_label.set_text("Requisitos não atendidos")
+            err_text = "\\n".join(errors)
+            self.info_label.set_text(f"Não é possível atualizar agora:\\n\\n{err_text}")
+            self.later_btn.set_label("Fechar")
+            self.later_btn.set_sensitive(True)
+            self.update_btn.set_visible(False)
+            return
+
         self.title_label.set_text("Instalando...")
         self.info_label.set_text("Isso pode levar alguns minutos. Não desligue o computador.")
         self.spinner.start()

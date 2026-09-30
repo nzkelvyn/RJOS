@@ -49,6 +49,17 @@ def main():
             return
             
         print(f"Instalando atualização {info['version']}...")
+        
+        ok, errors = manager.run_preflight()
+        if not ok:
+            print("A atualização não pode prosseguir pelas seguintes razões:")
+            for err in errors:
+                print(f" - {err}")
+            return
+            
+        # Prepara a partição A/B inativa, caso seja suportado no bootloader
+        manager.ab_manager.prepare_inactive_slot()
+        
         history = UpdateHistory()
         snap = SnapshotManager()
         
@@ -65,6 +76,7 @@ def main():
                 
         if success:
             print("Atualização concluída com sucesso.")
+            manager.ab_manager.mark_successful_update()
             history.add_entry(info['version'], "Atualização concluída", info.get('packages'))
         else:
             print("Erro ao atualizar. Revertendo alterações e mantendo logs.")

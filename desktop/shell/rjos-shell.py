@@ -370,7 +370,7 @@ class RjosPanel(Gtk.Window):
         main_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         main_box.set_hexpand(True)
 
-        # ── Esquerda: Logo + Apps abertos ──
+        # ── Esquerda: Logo ──
         left_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
         left_box.add_css_class("rjos-panel-left")
 
@@ -379,50 +379,24 @@ class RjosPanel(Gtk.Window):
         logo_btn.connect("clicked", self._on_logo_clicked)
         left_box.append(logo_btn)
 
-        # Separador
-        sep1 = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
-        sep1.set_margin_top(8)
-        sep1.set_margin_bottom(8)
-        sep1.set_margin_start(4)
-        sep1.set_margin_end(4)
-        left_box.append(sep1)
-
-        # Menu Atividades
-        activities_btn = Gtk.Button(label="Atividades")
-        activities_btn.add_css_class("rjos-panel-btn")
-        activities_btn.connect("clicked", self._on_logo_clicked)
-        left_box.append(activities_btn)
-
-        # Workspaces
-        self.workspace_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
-        self.workspace_box.set_margin_start(8)
-        for i in range(1, 5):
-            btn = Gtk.Button(label=str(i))
-            btn.add_css_class("rjos-workspace-btn")
-            if i == 1:
-                btn.add_css_class("rjos-workspace-btn-active")
-            self.workspace_box.append(btn)
-        left_box.append(self.workspace_box)
-
-        # ── Centro: Relógio ──
+        # ── Centro: Workspace / Contexto ──
         center_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         center_box.set_hexpand(True)
         center_box.set_halign(Gtk.Align.CENTER)
 
-        self.clock_label = Gtk.Label(label="00:00")
-        self.clock_label.add_css_class("rjos-clock")
+        self.workspace_label = Gtk.Label(label="Área de trabalho 1")
+        self.workspace_label.add_css_class("rjos-clock") # Reutilizando a classe de texto em negrito
+        center_box.append(self.workspace_label)
 
-        self.date_label = Gtk.Label(label="")
-        self.date_label.add_css_class("rjos-status-icon")
-        self.date_label.set_margin_start(8)
-
-        center_box.append(self.clock_label)
-        center_box.append(self.date_label)
-
-        # ── Direita: Status ──
-        right_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
+        # ── Direita: Status (Bluetooth, Rede, Áudio, Bateria, Notif, Relógio) ──
+        right_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
         right_box.add_css_class("rjos-panel-right")
         right_box.set_halign(Gtk.Align.END)
+
+        # Bluetooth
+        self.bt_label = Gtk.Label(label="ᛒ")
+        self.bt_label.add_css_class("rjos-status-icon")
+        right_box.append(self.bt_label)
 
         # Rede
         self.net_label = Gtk.Label(label="🌐")
@@ -447,7 +421,14 @@ class RjosPanel(Gtk.Window):
         notif_btn.set_tooltip_text("Notificações")
         right_box.append(notif_btn)
 
-        # Usuário / Power
+        # Relógio
+        self.clock_label = Gtk.Label(label="00:00")
+        self.clock_label.add_css_class("rjos-clock")
+        self.clock_label.set_margin_start(8)
+        self.clock_label.set_margin_end(8)
+        right_box.append(self.clock_label)
+
+        # Usuário / Power (opcional, mantido por usabilidade)
         power_btn = Gtk.Button(label="⏻")
         power_btn.add_css_class("rjos-panel-btn")
         power_btn.set_tooltip_text("Energia")
@@ -469,7 +450,6 @@ class RjosPanel(Gtk.Window):
     def _update_clock(self):
         now = datetime.now()
         self.clock_label.set_text(now.strftime("%H:%M"))
-        self.date_label.set_text(now.strftime("%a, %d %b"))
         return True  # continua o timeout
 
     def _start_status_updates(self):

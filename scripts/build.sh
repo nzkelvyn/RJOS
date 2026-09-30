@@ -374,9 +374,12 @@ create_user() {
 
   chroot_script "
     # Garante que todos os grupos necessários existam
-    for grp in audio video netdev plugdev bluetooth sudo; do
-      getent group "$grp" >/dev/null || groupadd -r "$grp"
-    done
+    groupadd -r -f audio || true
+    groupadd -r -f video || true
+    groupadd -r -f netdev || true
+    groupadd -r -f plugdev || true
+    groupadd -r -f bluetooth || true
+    groupadd -r -f sudo || true
 
     # Cria usuário
     id -u $username &>/dev/null || useradd \

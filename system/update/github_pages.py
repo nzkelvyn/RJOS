@@ -5,7 +5,7 @@ import yaml
 from .source import UpdateSource
 
 class GitHubPagesSource(UpdateSource):
-    def __init__(self, base_url="https://raw.githubusercontent.com/rjos/rjos-updates/main/updates"):
+    def __init__(self, base_url="https://nzkelvyn.github.io/RJOS/updates"):
         self.base_url = base_url
 
     def _fetch_yaml(self, url):

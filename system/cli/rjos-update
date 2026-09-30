@@ -10,10 +10,11 @@ from update.manager import UpdateManager
 from update.version import RJOS_VERSION
 from update.rjpm import RjpmWrapper
 from update.history import UpdateHistory
+from update.snapshot import SnapshotManager
 
 def main():
     parser = argparse.ArgumentParser(description="RJOS Update CLI")
-    parser.add_argument("command", choices=["check", "status", "info", "install", "history"])
+    parser.add_argument("command", choices=["check", "status", "info", "install", "history", "rollback"])
     args = parser.parse_args()
 
     manager = UpdateManager()
@@ -49,6 +50,11 @@ def main():
             
         print(f"Instalando atualização {info['version']}...")
         history = UpdateHistory()
+        snap = SnapshotManager()
+        
+        # Cria o snapshot antes de prosseguir
+        snap_id = snap.create_snapshot(description=f"Pre-update to {info['version']}")
+        
         success = True
         
         for pkg in info.get('packages', []):
@@ -61,8 +67,16 @@ def main():
             print("Atualização concluída com sucesso.")
             history.add_entry(info['version'], "Atualização concluída", info.get('packages'))
         else:
-            print("Erro ao atualizar.")
+            print("Erro ao atualizar. Revertendo alterações e mantendo logs.")
             history.add_entry(info['version'], "Erro", error="Falha ao instalar pacotes")
+            # Iniciar rollback se falhar de forma destrutiva
+            snap.rollback(snap_id)
+
+    elif args.command == "rollback":
+        print("Iniciando processo de Rollback...")
+        snap = SnapshotManager()
+        snap.rollback()
+        print("Rollback agendado/concluído.")
 
     elif args.command == "history":
         history = UpdateHistory()

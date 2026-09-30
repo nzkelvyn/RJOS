@@ -29,16 +29,16 @@ gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw, GLib, Gdk, Gio, GdkPixbuf, Pango
 
 RJOS_FILES_CSS = """
-/* ══ RJOS Files ══════════════════════════════════════════════════ */
+/* ══ RJOS Files — Estilos Oficiais RJOS ══════════════════════════ */
 
 .rjos-files-window {
-    background-color: #0D1B2A;
+    background-color: #121212;
 }
 
 /* Sidebar */
 .rjos-sidebar {
-    background-color: #122030;
-    border-right: 1px solid #1E3048;
+    background-color: #1E1E1E;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
     min-width: 180px;
     max-width: 220px;
     padding: 8px 0;
@@ -47,23 +47,25 @@ RJOS_FILES_CSS = """
     background: transparent;
     border: none;
     border-radius: 6px;
-    color: #8BA7BF;
+    color: #B8B8B8;
     font-size: 13px;
     padding: 8px 12px;
     margin: 1px 8px;
     text-align: left;
-    transition: all 150ms ease;
+    transition: all 120ms ease;
 }
 .rjos-sidebar-item:hover {
-    background-color: rgba(0, 212, 255, 0.1);
-    color: #E8F4FD;
+    background-color: #292929;
+    color: #FFFFFF;
 }
 .rjos-sidebar-item.active {
-    background-color: rgba(0, 212, 255, 0.15);
-    color: #00D4FF;
+    background-color: rgba(0, 91, 150, 0.22);
+    color: #FFFFFF;
+    border-left: 3px solid #005B96;
+    font-weight: 600;
 }
 .rjos-sidebar-section {
-    color: #4A6580;
+    color: #757575;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 1px;
@@ -73,44 +75,45 @@ RJOS_FILES_CSS = """
 
 /* Barra de localização */
 .rjos-location-bar {
-    background-color: #122030;
-    border-bottom: 1px solid #1E3048;
+    background-color: #1E1E1E;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     padding: 6px 8px;
     min-height: 42px;
 }
 .rjos-location-entry {
-    background-color: #0D1B2A;
-    border: 1px solid #1E3048;
+    background-color: #121212;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 6px;
-    color: #E8F4FD;
+    color: #FFFFFF;
     font-size: 13px;
     padding: 4px 10px;
-    transition: border-color 150ms ease;
+    transition: all 120ms ease;
 }
 .rjos-location-entry:focus {
-    border-color: #00D4FF;
-    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.15);
+    border-color: #005B96;
+    box-shadow: 0 0 0 2px rgba(0, 91, 150, 0.2);
+    outline: none;
 }
 .rjos-nav-btn {
     background: transparent;
     border: none;
     border-radius: 6px;
-    color: #8BA7BF;
+    color: #B8B8B8;
     font-size: 16px;
     padding: 4px 8px;
-    transition: all 150ms ease;
+    transition: all 120ms ease;
 }
 .rjos-nav-btn:hover {
-    background-color: rgba(0, 212, 255, 0.1);
-    color: #00D4FF;
+    background-color: #292929;
+    color: #FFFFFF;
 }
 .rjos-nav-btn:disabled {
-    color: #2A3F58;
+    color: #555555;
 }
 
 /* Grade de arquivos */
 .rjos-file-area {
-    background-color: #0D1B2A;
+    background-color: #121212;
 }
 .rjos-file-item {
     background: transparent;
@@ -118,33 +121,33 @@ RJOS_FILES_CSS = """
     border-radius: 8px;
     padding: 8px;
     margin: 2px;
-    transition: all 150ms ease;
+    transition: all 120ms ease;
     min-width: 90px;
     max-width: 110px;
 }
 .rjos-file-item:hover {
-    background-color: rgba(0, 212, 255, 0.08);
-    border-color: #1E3048;
+    background-color: #292929;
+    border-color: rgba(255, 255, 255, 0.08);
 }
 .rjos-file-item.selected {
-    background-color: rgba(0, 212, 255, 0.18);
-    border-color: #00D4FF;
+    background-color: rgba(0, 91, 150, 0.25);
+    border-color: #005B96;
 }
 .rjos-file-icon {
     font-size: 36px;
     margin-bottom: 4px;
 }
 .rjos-file-name {
-    color: #E8F4FD;
+    color: #FFFFFF;
     font-size: 11px;
     text-align: center;
 }
 
 /* Barra de status */
 .rjos-statusbar {
-    background-color: #0A1520;
-    border-top: 1px solid #1E3048;
-    color: #4A6580;
+    background-color: #1E1E1E;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: #B8B8B8;
     font-size: 11px;
     padding: 4px 12px;
     min-height: 24px;
